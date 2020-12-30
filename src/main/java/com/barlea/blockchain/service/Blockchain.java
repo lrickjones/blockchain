@@ -74,7 +74,7 @@ public class Blockchain {
 
 	public Block blockAt(int index) {
 		Optional<Block> result = chain.stream().filter(o -> o.getIndex() == index).findFirst();
-		return result.isPresent()?result.get():null;
+		return result.orElse(null);
 	}
 
 	public static boolean validChain(List<Block> chain, ObjectMapper mapper) throws JsonProcessingException {

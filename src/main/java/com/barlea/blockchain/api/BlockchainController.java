@@ -36,6 +36,15 @@ public class BlockchainController {
 	private Blockchain blockChain;
 
 	@Autowired
+	private Blockchain leoRegister;
+
+	@Autowired
+	private Blockchain courtRegister;
+
+	@Autowired
+	private Blockchain custodianRegister;
+
+	@Autowired
 	private ObjectMapper mapper;
 
 	public static final String NODE_ID = UUID.randomUUID().toString().replace("-", "");
