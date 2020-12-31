@@ -6,6 +6,8 @@ import java.util.UUID;
 import javax.validation.Valid;
 
 import com.barlea.blockchain.domain.Block;
+import com.barlea.blockchain.entities.Entity;
+import com.barlea.blockchain.entities.Leo;
 import com.barlea.blockchain.model.ChainResponse;
 import com.barlea.blockchain.model.MineResponse;
 import com.barlea.blockchain.model.TransactionResponse;
@@ -49,7 +51,7 @@ public class BlockchainController {
 
 	public static final String NODE_ID = UUID.randomUUID().toString().replace("-", "");
 	public static final String NODE_ACCOUNT_ADDRESS = "0";
-	public static final BigDecimal MINING_CASH_AWARD = BigDecimal.ONE;
+	public static final Entity entity = new Entity();
 
 	@GetMapping("/mine")
 	public MineResponse mine() throws JsonProcessingException {
@@ -63,7 +65,7 @@ public class BlockchainController {
 
 		// (2) - Reward the miner (us) by adding a transaction granting us 1
 		// coin
-		blockChain.addTransaction(NODE_ACCOUNT_ADDRESS, NODE_ID, MINING_CASH_AWARD);
+		blockChain.addTransaction(NODE_ACCOUNT_ADDRESS, NODE_ID, entity);
 
 		// (3) - Forge the new Block by adding it to the chain
 		Block newBlock = blockChain.createBlock(proof, lastBlock.hash(mapper));
@@ -78,10 +80,10 @@ public class BlockchainController {
 		return ChainResponse.builder().chain(blockChain.getChain()).length(blockChain.getChain().size()).build();
 	}
 
-	@PostMapping("/transactions")
-	public TransactionResponse newTransaction(@RequestBody @Valid Transaction trans) throws JsonProcessingException {
+	@PostMapping("/add/leo")
+	public TransactionResponse newTransaction(@RequestBody @Valid Leo leo) throws JsonProcessingException {
 
-		int index = blockChain.addTransaction(trans.getSender(), trans.getRecipient(), trans.getAmount());
+		int index = blockChain.addTransaction("me", "you", leo);
 
 		Block lastBlock = blockChain.blockAt(index);
 

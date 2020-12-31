@@ -16,7 +16,7 @@ import javax.validation.constraints.NotEmpty;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Custodian {
+public class Custodian extends Entity {
     @NotEmpty
     private String id;
 

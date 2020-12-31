@@ -16,7 +16,7 @@ import javax.validation.constraints.NotEmpty;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CourtRepresentative {
+public class CourtRepresentative extends Entity {
     @NotEmpty
     private String jurisdiction;
 

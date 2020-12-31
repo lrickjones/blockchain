@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 
 import com.barlea.blockchain.api.BlockchainController;
 import com.barlea.blockchain.domain.Transaction;
+import com.barlea.blockchain.entities.Entity;
 import com.barlea.blockchain.model.ChainResponse;
 import com.barlea.blockchain.model.MineResponse;
 import com.barlea.blockchain.model.TransactionResponse;
@@ -67,7 +68,7 @@ public class BlockchainApplicationTests {
 		for (int i = 0; i < numberOfBlocksToMine; i++) {
 
 			Transaction transaction = Transaction.builder().sender("s" + i).recipient("r" + i)
-					.amount(BigDecimal.valueOf(i)).build();
+					.entity(new Entity()).build();
 
 			TransactionResponse txnResponse = client.postForObject(baseUrl + "/transactions", transaction,
 					TransactionResponse.class);

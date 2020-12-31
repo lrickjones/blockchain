@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import com.barlea.blockchain.domain.Block;
 import com.barlea.blockchain.domain.Transaction;
+import com.barlea.blockchain.entities.Entity;
 import com.barlea.blockchain.util.BlockProofOfWorkGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,9 +45,9 @@ public class Blockchain {
 		createBlock(Block.GENESIS_BLOCK_PROOF, Block.GENESIS_BLOCK_PREV_HASH);
 	}
 
-	public int addTransaction(String sender, String recipient, BigDecimal amount) {
+	public int addTransaction(String sender, String recipient, Entity entity) {
 
-		Transaction transaction = Transaction.builder().sender(sender).recipient(recipient).amount(amount).build();
+		Transaction transaction = Transaction.builder().sender(sender).recipient(recipient).entity(entity).build();
 
 		currentTransactions.add(transaction);
 

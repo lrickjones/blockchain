@@ -17,7 +17,8 @@ import javax.validation.constraints.NotEmpty;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Leo {
+public class Leo extends Entity{
+
     @NotEmpty
     private String rank;
 
@@ -27,10 +28,5 @@ public class Leo {
     @NotEmpty
     private Person personalInfo;
 
-    @NotEmpty
-    private String sender;
-
-    @NotEmpty
-    private String recipient;
 
 }
