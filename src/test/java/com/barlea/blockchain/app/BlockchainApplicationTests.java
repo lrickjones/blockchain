@@ -1,14 +1,13 @@
 package com.barlea.blockchain.app;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-
 import com.barlea.blockchain.api.BlockchainController;
 import com.barlea.blockchain.domain.Transaction;
 import com.barlea.blockchain.entities.Entity;
 import com.barlea.blockchain.model.ChainResponse;
-import com.barlea.blockchain.model.MineResponse;
+import com.barlea.blockchain.model.RecordResponse;
 import com.barlea.blockchain.model.TransactionResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -23,9 +22,8 @@ import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.util.Objects;
 
 
 /**
@@ -52,7 +50,7 @@ public class BlockchainApplicationTests {
 	public void init() {
 
 		OkHttp3ClientHttpRequestFactory rf = new OkHttp3ClientHttpRequestFactory();
-		rf.setConnectTimeout(1 * 1000);
+		rf.setConnectTimeout(1000);
 		rf.setReadTimeout(1000 * 1000);
 
 		client = new RestTemplate(rf);
@@ -73,7 +71,7 @@ public class BlockchainApplicationTests {
 			TransactionResponse txnResponse = client.postForObject(baseUrl + "/transactions", transaction,
 					TransactionResponse.class);
 
-			MineResponse mineResponse = client.getForObject(baseUrl + "/mine", MineResponse.class);
+			RecordResponse mineResponse = client.getForObject(baseUrl + "/mine", RecordResponse.class);
 
 			log.info("mineResponse={}, txnResponse={}", mineResponse, txnResponse);
 		}
@@ -81,6 +79,7 @@ public class BlockchainApplicationTests {
 		ChainResponse chainResponse = client.getForObject(baseUrl + "/chain", ChainResponse.class);
 		log.info("chainResponse={}", chainResponse);
 
+		assert chainResponse != null;
 		Assert.assertEquals(Long.valueOf(numberOfBlocksToMine + 1), Long.valueOf(chainResponse.getLength()));
 	}
 
@@ -94,7 +93,7 @@ public class BlockchainApplicationTests {
 			Assert.fail();
 		}
 
-		MineResponse mined = mapper.readValue(response.body().string(), MineResponse.class);
+		RecordResponse mined = mapper.readValue(Objects.requireNonNull(response.body()).string(),RecordResponse.class);
 		Assert.assertNotNull(mined);
 		Assert.assertEquals(BlockchainController.NODE_ACCOUNT_ADDRESS, mined.getTransactions().get(0).getSender());
 

@@ -21,7 +21,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class MineResponse {
+public class RecordResponse {
 	private String message;
 	private int index;
 	private List<Transaction> transactions;
