@@ -19,4 +19,8 @@ public class Warrant extends Entity{
     @NotEmpty
     private String targetId;
 
+    private String description;
+
+    private Person owner;
+
 }
