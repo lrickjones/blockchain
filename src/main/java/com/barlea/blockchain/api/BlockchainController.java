@@ -2,11 +2,14 @@ package com.barlea.blockchain.api;
 
 import com.barlea.blockchain.domain.Block;
 import com.barlea.blockchain.entities.Applicant;
+import com.barlea.blockchain.entities.Credentials;
 import com.barlea.blockchain.entities.Warrant;
 import com.barlea.blockchain.model.ChainResponse;
 import com.barlea.blockchain.model.RecordResponse;
 import com.barlea.blockchain.model.TransactionResponse;
 import com.barlea.blockchain.service.Blockchain;
+import com.barlea.blockchain.service.Hasher;
+import com.barlea.blockchain.service.Rest;
 import com.barlea.blockchain.util.BlockProofOfWorkGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -129,10 +132,24 @@ public class BlockchainController {
 		return TransactionResponse.builder().index(index).build();
 	}
 
-	@PostMapping("/contract/add_leo")
-	public TransactionResponse addLeo(@RequestBody @Valid Applicant applicant, String warrantId) throws JsonProcessingException {
+	@PostMapping("/contract/applicant/add")
+	public TransactionResponse addApplicant(String userName, String passWord, @Valid Applicant applicant,String warrantId) throws JsonProcessingException {
 		Warrant warrant = Warrant.builder().warrantId(warrantId).build();
+		Credentials creds = Credentials.builder().userName(userName).passWord(passWord).build();
+		String validationId = Hasher.hash(creds.toString());
 		verifications.addTransaction("me","you",warrant);
 		return TransactionResponse.builder().index(requests.addTransaction("me", "you", applicant)).build();
 	}
+
+	@GetMapping("/contract/applicant/verify")
+	public boolean verifyApplicant(Applicant applicant) {
+		boolean result = false;
+		Applicant registeredApplicant = Rest.get("http://localhost:8080/applicant/find",Applicant.class,
+													"validationId",applicant.getValidationId());
+		if (registeredApplicant != null) {
+			result = registeredApplicant.getName().equals(applicant.getName());
+		}
+		return result;
+	}
+
 }

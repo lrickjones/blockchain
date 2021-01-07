@@ -48,7 +48,7 @@ public class ApplicantRegistry {
         if (uuid != null && !uuid.isEmpty()) {
             warrant = applicantList.stream().filter(o -> o.getUuid().equals(uuid)).findFirst();
         } else if (validationId != null && !validationId.isEmpty()) {
-            warrant = applicantList.stream().filter(o -> o.getRequestType().equals(validationId)).findFirst();
+            warrant = applicantList.stream().filter(o -> o.getValidationId().equals(validationId)).findFirst();
         }
         return warrant.orElse(null);
     }
