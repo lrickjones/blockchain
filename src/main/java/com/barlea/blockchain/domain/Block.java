@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 /**
- * Hash should be calculated on the ordered list of attributes and hence keeping
+ * Hasher should be calculated on the ordered list of attributes and hence keeping
  * them sorted to ensure that hashing is consistent.
  */
 @JsonPropertyOrder(alphabetic = true)

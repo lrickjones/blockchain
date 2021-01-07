@@ -8,6 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Arbiter API
+ *
+ * @author L Rick Jones
+ *
+ */
 @RestController
 @RequestMapping("/")
 public class ArbiterRegistry {
@@ -15,23 +21,23 @@ public class ArbiterRegistry {
     List<Arbiter> arbiterList = new ArrayList<>();
 
     @PostMapping("/arbiter/add")
-    public Arbiter addCourt(@RequestParam String jurisdiction,
-                            Name judge) {
-        Arbiter court = Arbiter.builder()
+    public Arbiter addArbiter(@RequestParam String jurisdiction,
+                            Name arbiterName) {
+        Arbiter arbiter = Arbiter.builder()
                 .jurisdiction(jurisdiction)
-                .personalInfo(judge)
+                .personalInfo(arbiterName)
                 .build();
-        arbiterList.add(court);
-        return court;
+        arbiterList.add(arbiter);
+        return arbiter;
     }
 
     @GetMapping("/arbiter/list")
-    public List<Arbiter> listCourts() {
+    public List<Arbiter> listArbiters() {
         return arbiterList;
     }
 
     @GetMapping("/arbiter/find")
-    public Arbiter findCourt(String uuid) {
+    public Arbiter findArbiter(String uuid) {
         Optional<Arbiter> court = arbiterList.stream().filter(o -> o.getUuid().equals(uuid)).findFirst();
         return court.orElse(null);
     }

@@ -19,14 +19,22 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 public class Applicant extends Entity{
 
+    /*
+    Hasher from applicants authentication credentials, will be tested against applicant registry
+     */
     @NotEmpty
-    private String rank;
+    private String validationId;
 
+    /*
+    Type of data request
+     */
     @NotEmpty
-    private String badgeNumber;
+    private String requestType;
 
+    /*
+    Applicants full name
+     */
     @NotEmpty
-    private Name personalInfo;
-
+    private Name name;
 
 }
