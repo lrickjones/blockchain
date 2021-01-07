@@ -1,6 +1,6 @@
 package com.barlea.blockchain.api;
 
-import com.barlea.blockchain.entities.Person;
+import com.barlea.blockchain.entities.Name;
 import com.barlea.blockchain.entities.Warrant;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +18,7 @@ public class WarrantRegistry {
     public Warrant addWarrant(@RequestParam String warrantId,
                               @RequestParam String targetId,
                               String description,
-                              Person owner) {
+                              Name owner) {
         Warrant warrant = Warrant.builder()
                 .warrantId(warrantId)
                 .targetId(targetId)

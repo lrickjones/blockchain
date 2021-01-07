@@ -1,7 +1,5 @@
 package com.barlea.blockchain.entities;
 
-import javax.validation.constraints.NotEmpty;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,15 +15,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Person {
-
-    @NotEmpty
-    private String firstName;
-
-    @NotEmpty
-    private String middleName;
-
-    @NotEmpty
-    private String lastName;
-
+public class PrivatePerson {
+    private String socialSecurity;
+    private String driversLicenseNumber;
+    private String driversLicenseState;
+    private String passportNumber;
+    private String mobilePhone;
 }

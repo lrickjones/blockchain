@@ -21,6 +21,6 @@ public class Warrant extends Entity{
 
     private String description;
 
-    private Person owner;
+    private Name owner;
 
 }

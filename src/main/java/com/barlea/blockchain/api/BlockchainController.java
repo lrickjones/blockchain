@@ -1,7 +1,7 @@
 package com.barlea.blockchain.api;
 
 import com.barlea.blockchain.domain.Block;
-import com.barlea.blockchain.entities.Leo;
+import com.barlea.blockchain.entities.Applicant;
 import com.barlea.blockchain.entities.Warrant;
 import com.barlea.blockchain.model.ChainResponse;
 import com.barlea.blockchain.model.RecordResponse;
@@ -63,9 +63,9 @@ public class BlockchainController {
 	}
 
 	@PostMapping("/register/transaction")
-	public TransactionResponse registerNewTransaction(@RequestBody @Valid Leo leo) throws JsonProcessingException {
+	public TransactionResponse registerNewTransaction(@RequestBody @Valid Applicant applicant) throws JsonProcessingException {
 
-		int index = register.addTransaction("me", "you", leo);
+		int index = register.addTransaction("me", "you", applicant);
 		return TransactionResponse.builder().index(index).build();
 	}
 
@@ -93,9 +93,9 @@ public class BlockchainController {
 	}
 
 	@PostMapping("/verification/transaction")
-	public TransactionResponse verificationNewTransaction(@RequestBody @Valid Leo leo) throws JsonProcessingException {
+	public TransactionResponse verificationNewTransaction(@RequestBody @Valid Applicant applicant) throws JsonProcessingException {
 
-		int index = verifications.addTransaction("me", "you", leo);
+		int index = verifications.addTransaction("me", "you", applicant);
 		return TransactionResponse.builder().index(index).build();
 	}
 
@@ -123,16 +123,16 @@ public class BlockchainController {
 	}
 
 	@PostMapping("/request/transaction")
-	public TransactionResponse requestNewTransaction(@RequestBody @Valid Leo leo) throws JsonProcessingException {
+	public TransactionResponse requestNewTransaction(@RequestBody @Valid Applicant applicant) throws JsonProcessingException {
 
-		int index = requests.addTransaction("me", "you", leo);
+		int index = requests.addTransaction("me", "you", applicant);
 		return TransactionResponse.builder().index(index).build();
 	}
 
 	@PostMapping("/contract/add_leo")
-	public TransactionResponse addLeo(@RequestBody @Valid Leo leo, String warrantId) throws JsonProcessingException {
+	public TransactionResponse addLeo(@RequestBody @Valid Applicant applicant, String warrantId) throws JsonProcessingException {
 		Warrant warrant = Warrant.builder().warrantId(warrantId).build();
 		verifications.addTransaction("me","you",warrant);
-		return TransactionResponse.builder().index(requests.addTransaction("me", "you", leo)).build();
+		return TransactionResponse.builder().index(requests.addTransaction("me", "you", applicant)).build();
 	}
 }

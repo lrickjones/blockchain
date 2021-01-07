@@ -1,5 +1,4 @@
 package com.barlea.blockchain.entities;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,25 +7,19 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotEmpty;
 
 /**
- * Represents a law enforcement officer
+ * Represents a court representative
  *
- * @author Praveendra Singh
+ * @author L Rick Jones
  *
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Leo extends Entity{
+public class Arbiter extends Entity {
+    @NotEmpty
+    private String jurisdiction;
 
     @NotEmpty
-    private String rank;
-
-    @NotEmpty
-    private String badgeNumber;
-
-    @NotEmpty
-    private Person personalInfo;
-
-
+    private Name personalInfo;
 }
