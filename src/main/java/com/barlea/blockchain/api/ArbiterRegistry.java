@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Arbiter API
+ * Arbiter Registry API
  *
  * @author L Rick Jones
  *
@@ -38,8 +38,8 @@ public class ArbiterRegistry {
 
     @GetMapping("/arbiter/find")
     public Arbiter findArbiter(String uuid) {
-        Optional<Arbiter> court = arbiterList.stream().filter(o -> o.getUuid().equals(uuid)).findFirst();
-        return court.orElse(null);
+        Optional<Arbiter> arbiter = arbiterList.stream().filter(o -> o.getUuid().equals(uuid)).findFirst();
+        return arbiter.orElse(null);
     }
 }
 

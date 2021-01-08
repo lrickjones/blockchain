@@ -3,7 +3,7 @@ package com.barlea.blockchain.api;
 import com.barlea.blockchain.domain.Block;
 import com.barlea.blockchain.entities.Applicant;
 import com.barlea.blockchain.entities.Credentials;
-import com.barlea.blockchain.entities.Warrant;
+import com.barlea.blockchain.entities.Authority;
 import com.barlea.blockchain.model.ChainResponse;
 import com.barlea.blockchain.model.RecordResponse;
 import com.barlea.blockchain.model.TransactionResponse;
@@ -134,10 +134,10 @@ public class BlockchainController {
 
 	@PostMapping("/contract/applicant/add")
 	public TransactionResponse addApplicant(String userName, String passWord, @Valid Applicant applicant,String warrantId) throws JsonProcessingException {
-		Warrant warrant = Warrant.builder().warrantId(warrantId).build();
+		Authority authority = Authority.builder().authorityId(warrantId).build();
 		Credentials creds = Credentials.builder().userName(userName).passWord(passWord).build();
 		String validationId = Hasher.hash(creds.toString());
-		verifications.addTransaction("me","you",warrant);
+		verifications.addTransaction("me","you", authority);
 		return TransactionResponse.builder().index(requests.addTransaction("me", "you", applicant)).build();
 	}
 

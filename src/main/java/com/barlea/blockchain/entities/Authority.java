@@ -11,10 +11,10 @@ import javax.validation.constraints.NotEmpty;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Warrant extends Entity{
+public class Authority extends Entity{
 
     @NotEmpty
-    private String warrantId;
+    private String authorityId;
 
     @NotEmpty
     private String targetId;

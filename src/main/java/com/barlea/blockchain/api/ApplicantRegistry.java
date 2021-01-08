@@ -2,10 +2,6 @@ package com.barlea.blockchain.api;
 
 import com.barlea.blockchain.entities.Applicant;
 import com.barlea.blockchain.entities.Name;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Example;
-import io.swagger.annotations.ExampleProperty;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -13,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Applicant API
+ * Applicant Registry API
  *
  * @author L Rick Jones
  *
