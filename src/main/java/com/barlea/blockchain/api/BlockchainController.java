@@ -61,12 +61,12 @@ public class BlockchainController {
 	}
 
 	@GetMapping("/register/chain")
-	public ChainResponse registerFullChain() throws JsonProcessingException {
+	public ChainResponse registerFullChain() {
 		return ChainResponse.builder().chain(register.getChain()).length(register.getChain().size()).build();
 	}
 
 	@PostMapping("/register/transaction")
-	public TransactionResponse registerNewTransaction(@RequestBody @Valid Applicant applicant) throws JsonProcessingException {
+	public TransactionResponse registerNewTransaction(@RequestBody @Valid Applicant applicant) {
 
 		int index = register.addTransaction("me", "you", applicant);
 		return TransactionResponse.builder().index(index).build();
@@ -91,12 +91,12 @@ public class BlockchainController {
 	}
 
 	@GetMapping("/verification/chain")
-	public ChainResponse verificationFullChain() throws JsonProcessingException {
+	public ChainResponse verificationFullChain() {
 		return ChainResponse.builder().chain(verifications.getChain()).length(verifications.getChain().size()).build();
 	}
 
 	@PostMapping("/verification/transaction")
-	public TransactionResponse verificationNewTransaction(@RequestBody @Valid Applicant applicant) throws JsonProcessingException {
+	public TransactionResponse verificationNewTransaction(@RequestBody @Valid Applicant applicant) {
 
 		int index = verifications.addTransaction("me", "you", applicant);
 		return TransactionResponse.builder().index(index).build();
@@ -121,24 +121,36 @@ public class BlockchainController {
 	}
 
 	@GetMapping("/request/chain")
-	public ChainResponse requestFullChain() throws JsonProcessingException {
+	public ChainResponse requestFullChain() {
 		return ChainResponse.builder().chain(requests.getChain()).length(requests.getChain().size()).build();
 	}
 
 	@PostMapping("/request/transaction")
-	public TransactionResponse requestNewTransaction(@RequestBody @Valid Applicant applicant) throws JsonProcessingException {
+	public TransactionResponse requestNewTransaction(@RequestBody @Valid Applicant applicant) {
 
 		int index = requests.addTransaction("me", "you", applicant);
 		return TransactionResponse.builder().index(index).build();
 	}
 
-	@PostMapping("/contract/applicant/add")
-	public TransactionResponse addApplicant(String userName, String passWord, @Valid Applicant applicant,String warrantId) throws JsonProcessingException {
-		Authority authority = Authority.builder().authorityId(warrantId).build();
-		Credentials creds = Credentials.builder().userName(userName).passWord(passWord).build();
-		String validationId = Hasher.hash(creds.toString());
-		verifications.addTransaction("me","you", authority);
-		return TransactionResponse.builder().index(requests.addTransaction("me", "you", applicant)).build();
+	@PostMapping("/contract/applicant/request_token")
+	public RecordResponse requestAccessToken(String userName, String password, String applicantUuId,String authName, String authPassword, String authorityUuId) throws JsonProcessingException {
+		// Find applicant
+		Applicant applicant = Rest.get("http://localhost:8080/applicant/find",Applicant.class,"uuid",applicantUuId);
+		if (applicant == null) return null;
+		// Validate applicant
+		String applicantId = Hasher.hash(Credentials.builder().userName(userName).password(password).build().toString());
+		if (!applicantId.equals(applicant.getValidationId())) return null;
+		// Find authority
+		Authority authority = Rest.get("http://localhost:8080/authority/find",Authority.class,"uuid",authorityUuId);
+		if (authority == null) return null;
+		// validate authority
+		String validationId = Hasher.hash(Credentials.builder().userName(authName).password(authPassword).build().toString());
+		if (!validationId.equals(authority.getAuthorityId())) return null;
+		// record both transactions in the verification record
+		verifications.addTransaction(applicant.getUuid(), authority.getUuid(), applicant);
+		verifications.addTransaction(applicant.getUuid(), authority.getUuid(), authority);
+		// create block and add to verification block chain
+		return this.verificationRecord();
 	}
 
 	@GetMapping("/contract/applicant/verify")

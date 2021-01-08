@@ -1,12 +1,13 @@
 package com.barlea.blockchain.api;
 
-import com.barlea.blockchain.entities.Name;
 import com.barlea.blockchain.entities.Authority;
+import com.barlea.blockchain.entities.PublicPerson;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 /**
  * Authorization Registry API
  *
@@ -20,15 +21,15 @@ public class AuthorizationRegistry {
     List<Authority> authorityList = new ArrayList<>();
 
     @PostMapping("/authority/add")
-    public Authority addAuthority(@RequestParam String warrantId,
-                                @RequestParam String targetId,
+    public Authority addAuthority(@RequestParam String authorityId,
+                                @RequestParam String authorityType,
                                 String description,
-                                Name owner) {
+                                PublicPerson subject) {
         Authority authority = Authority.builder()
-                .authorityId(warrantId)
-                .targetId(targetId)
+                .authorityId(authorityId)
+                .authorityType(authorityType)
                 .description(description)
-                .owner(owner)
+                .subject(subject)
                 .build();
         authorityList.add(authority);
         return authority;
@@ -40,12 +41,12 @@ public class AuthorizationRegistry {
     }
 
     @GetMapping("/authority/find")
-    public Authority findAuthority(String warrantId, String uuid) {
+    public Authority findAuthority(String authorityId, String uuid) {
         Optional<Authority> authority = Optional.empty();
         if (uuid != null && !uuid.isEmpty()) {
             authority = authorityList.stream().filter(o -> o.getUuid().equals(uuid)).findFirst();
-        } else if (warrantId != null && !warrantId.isEmpty()) {
-            authority = authorityList.stream().filter(o -> o.getAuthorityId().equals(warrantId)).findFirst();
+        } else if (authorityId != null && !authorityId.isEmpty()) {
+            authority = authorityList.stream().filter(o -> o.getAuthorityId().equals(authorityId)).findFirst();
         }
         return authority.orElse(null);
     }

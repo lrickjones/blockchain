@@ -29,4 +29,6 @@ public class PublicPerson {
 
     private String workPhone;
 
+    private Name name;
+
 }
