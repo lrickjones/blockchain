@@ -26,7 +26,7 @@ public class AuthorizationRegistry {
                                 String description,
                                 PublicPerson subject) {
         Authority authority = Authority.builder()
-                .authorityId(authorityId)
+                .validationId(authorityId)
                 .authorityType(authorityType)
                 .description(description)
                 .subject(subject)
@@ -46,7 +46,7 @@ public class AuthorizationRegistry {
         if (uuid != null && !uuid.isEmpty()) {
             authority = authorityList.stream().filter(o -> o.getUuid().equals(uuid)).findFirst();
         } else if (authorityId != null && !authorityId.isEmpty()) {
-            authority = authorityList.stream().filter(o -> o.getAuthorityId().equals(authorityId)).findFirst();
+            authority = authorityList.stream().filter(o -> o.getValidationId().equals(authorityId)).findFirst();
         }
         return authority.orElse(null);
     }

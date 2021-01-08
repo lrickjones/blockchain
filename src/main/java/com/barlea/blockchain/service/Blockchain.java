@@ -11,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * This class is the backbone of our Blockchain system.
@@ -75,6 +72,16 @@ public class Blockchain {
 		return result.orElse(null);
 	}
 
+	public int findBlock(String uuid) {
+		List<Block> blocks = new ArrayList<>();
+		for(Block b:chain) {
+			if (b.getTransactions().stream().anyMatch(t->t.getEntity().getUuid().equals(uuid)))
+				blocks.add(b);
+		}
+		Optional<Block> result = blocks.stream().max(Comparator.comparingInt(Block::getIndex));
+		return result.map(Block::getIndex).orElse(-1);
+	}
+
 	public static boolean validChain(List<Block> chain, ObjectMapper mapper) throws JsonProcessingException {
 
 		if (chain == null || chain.isEmpty())
@@ -106,4 +113,6 @@ public class Blockchain {
 	public boolean validChain() throws JsonProcessingException {
 		return validChain(chain, mapper);
 	}
+
+
 }

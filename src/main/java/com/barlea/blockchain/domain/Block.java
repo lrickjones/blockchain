@@ -19,10 +19,10 @@ import lombok.NoArgsConstructor;
  * 
  * @author Praveendra Singh
  *
- */
+ **/
 @Data
 @Builder
-/**
+/*
  * Hasher should be calculated on the ordered list of attributes and hence keeping
  * them sorted to ensure that hashing is consistent.
  */
@@ -49,4 +49,5 @@ public class Block {
 		String json = mapper.writeValueAsString(this);
 		return Hashing.sha256().hashString(json, StandardCharsets.UTF_8).toString();
 	}
+
 }

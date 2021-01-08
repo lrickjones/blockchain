@@ -12,12 +12,15 @@ import javax.validation.constraints.NotEmpty;
 public class Authority extends Entity{
 
     @NotEmpty
-    private String authorityId;
+    private String validationId;
 
     @NotEmpty
     private String authorityType;
 
     private String description;
+
+    @NotEmpty
+    private String arbiterId;
 
     @NotEmpty
     private PublicPerson subject;

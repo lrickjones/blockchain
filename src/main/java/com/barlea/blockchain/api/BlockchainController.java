@@ -1,9 +1,8 @@
 package com.barlea.blockchain.api;
 
 import com.barlea.blockchain.domain.Block;
-import com.barlea.blockchain.entities.Applicant;
-import com.barlea.blockchain.entities.Credentials;
-import com.barlea.blockchain.entities.Authority;
+import com.barlea.blockchain.domain.Transaction;
+import com.barlea.blockchain.entities.*;
 import com.barlea.blockchain.model.ChainResponse;
 import com.barlea.blockchain.model.RecordResponse;
 import com.barlea.blockchain.model.TransactionResponse;
@@ -28,19 +27,19 @@ import javax.validation.Valid;
 @RequestMapping("/")
 public class BlockchainController {
 
-	@Autowired
-	private Blockchain register;
+	private final Blockchain register = new Blockchain();
 
-	@Autowired
-	private Blockchain requests;
+	private final Blockchain requests = new Blockchain();
 
-	@Autowired
-	private Blockchain verifications;
+	private final Blockchain verifications = new Blockchain();
 
 	@Autowired
 	private ObjectMapper mapper;
 
 	public static final String NODE_ACCOUNT_ADDRESS = "0";
+
+	public BlockchainController() throws JsonProcessingException {
+	}
 
 	@GetMapping("/register/record")
 	public RecordResponse registerRecord() throws JsonProcessingException {
@@ -70,6 +69,32 @@ public class BlockchainController {
 
 		int index = register.addTransaction("me", "you", applicant);
 		return TransactionResponse.builder().index(index).build();
+	}
+
+	private RecordResponse updateRegister(String sender, String receiver, String uuid, int index) {
+		Block block = register.lastBlock();
+		boolean exists = false;
+		if (block.getIndex() > 1) {
+			for (Transaction t:block.getTransactions()) {
+				if (t.getEntity().getUuid().equals(uuid)) {
+					if (t.getEntity() instanceof ActiveContract) {
+						((ActiveContract) t.getEntity()).setContractIndex(index);
+						exists = true;
+					}
+				}
+				register.addTransaction(t.getSender(),t.getRecipient(),t.getEntity());
+			}
+		}
+		if (!exists) {
+			ActiveContract activeContract = ActiveContract.builder().contractId(uuid).contractIndex(index).build();
+			register.addTransaction(sender,receiver,activeContract);
+		}
+		//TODO: Does an exception lead to orphaned transactions?
+		try {
+			return registerRecord();
+		} catch (JsonProcessingException e) {
+			return null;
+		}
 	}
 
 	@GetMapping("/verification/record")
@@ -133,7 +158,7 @@ public class BlockchainController {
 	}
 
 	@PostMapping("/contract/applicant/request_token")
-	public RecordResponse requestAccessToken(String userName, String password, String applicantUuId,String authName, String authPassword, String authorityUuId) throws JsonProcessingException {
+	public Contract requestAccessToken(String userName, String password, String applicantUuId,String authName, String authPassword, String authorityUuId) throws JsonProcessingException {
 		// Find applicant
 		Applicant applicant = Rest.get("http://localhost:8080/applicant/find",Applicant.class,"uuid",applicantUuId);
 		if (applicant == null) return null;
@@ -145,12 +170,20 @@ public class BlockchainController {
 		if (authority == null) return null;
 		// validate authority
 		String validationId = Hasher.hash(Credentials.builder().userName(authName).password(authPassword).build().toString());
-		if (!validationId.equals(authority.getAuthorityId())) return null;
+		if (!validationId.equals(authority.getValidationId())) return null;
 		// record both transactions in the verification record
 		verifications.addTransaction(applicant.getUuid(), authority.getUuid(), applicant);
 		verifications.addTransaction(applicant.getUuid(), authority.getUuid(), authority);
-		// create block and add to verification block chain
-		return this.verificationRecord();
+		// create block and add to verification block chain and create contract
+		Contract contract = Contract.builder().applicantId(applicant.getUuid())
+				.authorityId(authority.getUuid())
+				.lastVerification(verificationRecord().getIndex())
+				.build();
+		// add contract transaction to requests
+		requests.addTransaction(applicant.getUuid(), authority.getUuid(),contract);
+		// update the registry that there is a new or updated contract
+		updateRegister(applicant.getUuid(),authority.getUuid(),contract.getUuid(),requestRecord().getIndex());
+		return contract;
 	}
 
 	@GetMapping("/contract/applicant/verify")
