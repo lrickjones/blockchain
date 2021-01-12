@@ -49,80 +49,53 @@
         </form>
     </div>
 </nav>
-<div class="h2 container text-primary">Welcome <span id="firstName"></span>, </div>
 <br>
 <div class="container">
-    <div class="h3 container text-secondary">Here are your pending work items:</div>
 
-    <form action="applicant/account.html">
-        <div id="workItems" class="container btn-group btn-group-toggle fadeIn first" data-toggle="buttons"></div>
-        <input type="submit" class="fadeIn second" value="Log In">
-    </form>
+    <div class="wrapper fadeInDown">
+        <div id="formContent">
+            <!-- Tabs Titles -->
+            <div class="h3 container text-secondary fadeIn first">Request Form</div>
+            <!-- Login Form -->
+            <div id="error" class="text-danger"></div>
+            <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
+            <input type="password" id="password" class="fadeIn second hidden" name="password" placeholder="password">
+            <input type="text" id="authName" class="fadeIn third" name="authName" placeholder="authority name">
+            <input type="password" id="authPassword" class="fadeIn third hidden" name="authPassword" placeholder="authorization code">
+            <input  type="button" class="fadeIn fourth" onclick="validate()" value="Request Account Information">
+
+        </div>
+    </div>
 
 </div>
 </body>
 <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
-<!--script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script-->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 <script>
-   $(document).ready(function() {
+   function validate() {
      var url_string = window.location.href;
      var url = new URL(url_string);
      var authorityUuId = url.searchParams.get("authorityUuId");
-     if (!authorityUuId) {
-         history.go(-1);
-     } else {
-     /*
+     var applicantUuId = url.searchParams.get("applicantUuId");
+     var userName = document.getElementById("userName").value;
+     var password = document.getElementById("password").value;
+     var authName = document.getElementById("authName").value;
+     var authPassword = document.getElementById("authPassword").value;
          $.ajax({
-            type : "GET",
-            url : "/contract/applicant/validationId?userName="+userName+"&password="+password,
+            type : "POST",
+            url : "/contract/applicant/request_token?userName="+userName+"&password="+password+"&applicantUuId="+applicantUuId+"&authName="+authName+"&authPassword="+authPassword+"&authorityUuId="+authorityUuId,
             success : function(data) {
-                if (!data.localeCompare("Invalid")) {
-                    history.go(-1);
-                } else {
-                    $.ajax({
-                        type: "GET",
-                        url : "/applicant/find?uuid="+data,
-                        success : function(value) {
-                            if (!value) history.go(-1);
-                            $("#firstName").append(value.name.firstName);
-                            getAuthorityItems();
-                        },
-                        error : function(data) {
-                            alert(data);
-                        }
-                    });
-                }
+                alert("Request for account data sent");
             },
-            error : function(data) {
-                history.go(-1);
+            error : function(xhr) {
+                alert(xhr.status);
             }
          });
-     */
      }
-   });
 
-   function getAuthorityItems() {
-      $.getJSON("http://localhost:8080/authority/list", function(result){
-          $.each(result, function(key,value) {
-             addAuthorityItem(value.validationId, value.authorityType, value.description, value.subject.name);
-          });
-       });
-   }
-
-   function addAuthorityItem(validationId, authorityType, description, name) {
-      var div = "<label class='btn btn-secondary'>";
-      div += "<H4>" + authorityType + "</H4>";
-      div += "<input type='radio' id='" + validationId + "'>";
-      div += "<H5>" + name.lastName + ", " + name.firstName + " " + name.middleName + "</H5>";
-      div += description;
-      div += "</label>";
-      $("#workItems").append(div);
-   }
 </script>
 </html>
