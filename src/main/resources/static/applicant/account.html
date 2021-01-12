@@ -9,7 +9,7 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#"><img src="../img/logo.png" style="width:120px;height:120px;" alt="BARLEA Logo"></a>
+    <a class="navbar-brand" href="#"><img src="../img/logo.png" style="width:100px;height:100px;" alt="BARLEA Logo" class="border border-warning rounded"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -17,12 +17,18 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="http://localhost:8080">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
+                <a class="nav-link" href="#">Validations</a>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Contracts</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="http://localhost:8080">Log Out</a>
+            </li>
+            <!--li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Dropdown
                 </a>
@@ -32,10 +38,10 @@
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#">Something else here</a>
                 </div>
-            </li>
-            <li class="nav-item">
+            </li-->
+            <!--li class="nav-item">
                 <a class="nav-link disabled" href="#">Disabled</a>
-            </li>
+            </li-->
         </ul>
         <form class="form-inline my-2 my-lg-0">
             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -43,11 +49,22 @@
         </form>
     </div>
 </nav>
+
 <div class="h2 container text-primary">Welcome <span id="firstName"></span>, </div>
 <br>
 <div class="container">
-    <div class="h3 container m-2 text-secondary">Here are your work items for today:</div>
-    <div id="workItems" class="h4 m-4 p-4 container text-info border border-primary rounded bg-light"></div>
+    <div class="h3 container text-secondary">Here are your pending work items:</div>
+
+    <div class="wrapper fadeInDown">
+        <div class="formContent">
+            <form action="/applicant/process.html">
+                <div id="workItems" class="container btn-group btn-group-toggle fadeIn first" data-toggle="buttons"></div>
+                <input type="submit" class="fadeIn second" value="Process Selected Item">
+                <input type="hidden" id="applicantUuId" name="applicantUuId">
+            </form>
+        </div>
+    </div>
+
 </div>
 </body>
 <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -80,7 +97,8 @@
                         success : function(value) {
                             if (!value) history.go(-1);
                             $("#firstName").append(value.name.firstName);
-                            getWorkItems();
+                            document.getElementById("applicantUuId").value = value.uuid;
+                            getAuthorityItems();
                         },
                         error : function(data) {
                             alert(data);
@@ -95,12 +113,22 @@
      }
    });
 
-   function getWorkItems() {
+   function getAuthorityItems() {
       $.getJSON("http://localhost:8080/authority/list", function(result){
           $.each(result, function(key,value) {
-             $("#workItems").append(value.subject.name.lastName + ", " + value.subject.name.firstName + "<br>" + value.authorityType + ": " + value.description);
+             addAuthorityItem(value.uuid, value.authorityType, value.description, value.subject.name);
           });
        });
+   }
+
+   function addAuthorityItem(uuid, authorityType, description, name) {
+      var div = "<label class='btn btn-secondary'>";
+      div += "<H4>" + authorityType + "</H4>";
+      div += "<input type='radio' id='" + uuid + "' name='authorityUuId' value='"+ uuid +"'>";
+      div += "<H5>" + name.lastName + ", " + name.firstName + " " + name.middleName + "</H5>";
+      div += description;
+      div += "</label>";
+      $("#workItems").append(div);
    }
 </script>
 </html>

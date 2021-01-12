@@ -30,9 +30,9 @@ public class Initialize implements ApplicationListener<ApplicationStartedEvent> 
         /*Applicant applicant =*/ Rest.post("http://localhost:8080/applicant/add",Applicant.class,
                 "requestType","test",
                 "validationId",validationId,
-                "firstName","john",
-                "middleName","j",
-                "lastName","doe");
+                "firstName","John",
+                "middleName","J",
+                "lastName","Doe");
 
         Credentials auths = Credentials.builder().userName("federalcourt").password("fedPass123").build();
         String authorityId;
@@ -43,15 +43,15 @@ public class Initialize implements ApplicationListener<ApplicationStartedEvent> 
         }
         /*Authority authority =*/ Rest.post("http://localhost:8080/authority/add",Authority.class,
                 "authorityId",authorityId,
-                "authorityType","warrant",
-                "description","access to contacts made over last 6 months",
+                "authorityType","Warrant",
+                "description","Access to contacts made over last 6 months, Case# 12345678",
                 "homeDomicile.address1","123 East W Street",
                 "homeDomicile.state", "NM",
                 "homeDomicile.city", "Roswell",
                 "homeDomicile.zip", "88201",
-                "name.firstName","joe",
-                "name.middleName","d",
-                "name.lastName","bloe",
+                "name.firstName","Joe",
+                "name.middleName","D",
+                "name.lastName","Smith",
                 "birthDate","07/04/1960",
                 "homePhone","555-667-8309");
 
