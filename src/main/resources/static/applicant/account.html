@@ -79,32 +79,18 @@
    $(document).ready(function() {
      var url_string = window.location.href;
      var url = new URL(url_string);
-     var userName = url.searchParams.get("userName");
-     var password = url.searchParams.get("password");
-     if (!userName || !password) {
+     var uuid = url.searchParams.get("applicantUuId");
+     if (!uuid) {
          history.go(-1);
      } else {
          $.ajax({
             type : "GET",
-            url : "/contract/applicant/validationId?userName="+userName+"&password="+password,
+            url : "/contract/applicant/find?uuid=" + uuid,
             success : function(data) {
-                if (!data.localeCompare("Invalid")) {
-                    history.go(-1);
-                } else {
-                    $.ajax({
-                        type: "GET",
-                        url : "/applicant/find?validationId="+data,
-                        success : function(value) {
-                            if (!value) history.go(-1);
-                            $("#firstName").append(value.name.firstName);
-                            document.getElementById("applicantUuId").value = value.uuid;
-                            getAuthorityItems();
-                        },
-                        error : function(data) {
-                            alert(data);
-                        }
-                    });
-                }
+                if (!value) history.go(-1);
+                $("#firstName").append(value.name.firstName);
+                document.getElementById("applicantUuId").value = value.uuid;
+                getAuthorityItems();
             },
             error : function(data) {
                 history.go(-1);
