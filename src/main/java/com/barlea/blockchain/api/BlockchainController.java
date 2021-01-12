@@ -197,4 +197,15 @@ public class BlockchainController {
 		return result;
 	}
 
+	@GetMapping("/contract/applicant/validationId")
+	public String generateValidationId(@RequestParam String userName, @RequestParam String password) {
+		String result;
+		try {
+			result = Hasher.hash(Credentials.builder().userName(userName).password(password).build().toString());
+		} catch (JsonProcessingException e) {
+			result = "Invalid";
+		}
+		return result;
+	}
+
 }
