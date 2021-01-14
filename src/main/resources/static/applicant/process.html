@@ -44,18 +44,45 @@
 <br>
 <div class="container">
 
-    <div class="wrapper fadeInDown">
-        <div id="formContent">
-            <!-- Tabs Titles -->
-            <div class="h3 container text-secondary fadeIn first">Request Form</div>
-            <!-- Login Form -->
-            <div id="error" class="text-danger"></div>
-            <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
-            <input type="password" id="password" class="fadeIn second hidden" name="password" placeholder="password">
-            <input type="text" id="authName" class="fadeIn third" name="authName" placeholder="authority name">
-            <input type="password" id="authPassword" class="fadeIn third hidden" name="authPassword" placeholder="authorization code">
-            <input  type="button" class="fadeIn fourth" onclick="validate()" value="Request Account Information">
-
+    <div class="container row">
+        <div class="container col border border-primary rounded">
+            <div id="authorityType"></div>
+            <div id="description"></div>
+            <label>Subject's Name</label>
+            <div class="container row">
+                <input type="text" id="firstName" class="container col" name="firstName" placeholder="First Name">
+                <input type="text" id="middleName" class="container col" name="middleName" placeholder="Middle Name">
+                <input type="text" id="lastName" class="container col" name="lastName" placeholder="Last Name">
+            </div >
+            <label>Subject's Address</label>
+            <input type="text" id="address1" class="container col" name="address1" placeholder="Address 1">
+            <input type="text" id="address2" class="container col" name="address2" placeholder="Address 2">
+            <div class="container row">
+                <input type="text" id="state" class="container col" name="state" placeholder="State">
+                <input type="text" id="city" class="container col" name="city" placeholder="City">
+                <input type="text" id="zip" class="container col" name="zip" placeholder="ZIP Code">
+            </div>
+            <label>Subject's Date of Birth</label>
+            <div class="container row">
+                <input type="text" id="month" class="container col" name="month" placeholder="Birth Month">
+                <input type="text" id="day" class="container col" name="day" placeholder="Birth Day">
+                <input type="text" id="year" class="container col" name="year" placeholder="Birth Year">
+            </div >
+        </div>
+        <div class="container col">
+            <div class="wrapper fadeInDown">
+                <div id="formContent">
+                    <!-- Tabs Titles -->
+                    <div class="h3 container text-secondary fadeIn first">Request Form</div>
+                    <!-- Login Form -->
+                    <div id="error" class="text-danger"></div>
+                    <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
+                    <input type="password" id="password" class="fadeIn second hidden" name="password" placeholder="password">
+                    <input type="text" id="authName" class="fadeIn third" name="authName" placeholder="authority name">
+                    <input type="password" id="authPassword" class="fadeIn third hidden" name="authPassword" placeholder="authorization code">
+                    <input  type="button" class="fadeIn fourth" onclick="validate()" value="Request Account Information">
+                </div>
+            </div>
         </div>
     </div>
 
