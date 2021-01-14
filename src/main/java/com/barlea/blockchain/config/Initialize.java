@@ -1,6 +1,7 @@
 package com.barlea.blockchain.config;
 
 import com.barlea.blockchain.entities.Applicant;
+import com.barlea.blockchain.entities.Arbiter;
 import com.barlea.blockchain.entities.Authority;
 import com.barlea.blockchain.entities.Credentials;
 import com.barlea.blockchain.service.Hasher;
@@ -34,6 +35,12 @@ public class Initialize implements ApplicationListener<ApplicationStartedEvent> 
                 "middleName","J",
                 "lastName","Doe");
 
+        Arbiter arbiter = Rest.post("http://localhost:8080/arbiter/add",Arbiter.class,
+                "jurisdiction", "West Side",
+                "firstName","Wyatt",
+                "middleName","P",
+                "lastName","Earp");
+
         Credentials auths = Credentials.builder().userName("federalcourt").password("fedPass123").build();
         String authorityId;
         try {
@@ -42,7 +49,8 @@ public class Initialize implements ApplicationListener<ApplicationStartedEvent> 
             authorityId = "Invalid";
         }
         /*Authority authority =*/ Rest.post("http://localhost:8080/authority/add",Authority.class,
-                "authorityId",authorityId,
+                "arbiterId", arbiter.getUuid(),
+                "validationId",authorityId,
                 "authorityType","Warrant",
                 "description","Access to contacts made over last 6 months, Case# 12345678",
                 "homeDomicile.address1","123 East W Street",

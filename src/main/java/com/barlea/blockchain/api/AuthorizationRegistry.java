@@ -21,12 +21,14 @@ public class AuthorizationRegistry {
     List<Authority> authorityList = new ArrayList<>();
 
     @PostMapping("/authority/add")
-    public Authority addAuthority(@RequestParam String authorityId,
+    public Authority addAuthority(@RequestParam String arbiterId,
+                                @RequestParam String validationId,
                                 @RequestParam String authorityType,
                                 String description,
                                 PublicPerson subject) {
         Authority authority = Authority.builder()
-                .validationId(authorityId)
+                .arbiterId(arbiterId)
+                .validationId(validationId)
                 .authorityType(authorityType)
                 .description(description)
                 .subject(subject)

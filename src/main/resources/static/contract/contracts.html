@@ -91,6 +91,14 @@
        });
    }
 
+   var arbiter;
+   function getArbiter(id) {
+      if (!id) arbiter =  null;
+      $.getJSON("/arbiter/find?uuid=" + id, function(result){
+            arbiter = result;
+       });
+   }
+
    function renderContract(contract) {
       var div = "<div class='container border border-primary rounded'>";
       div += "<div class='container'>" + contract.currentStatus + "</div>";
@@ -99,7 +107,7 @@
       div += "<div class='container'>";
       getApplicant(contract.applicantId);
       if (applicant) {
-        div += applicant.name.lastName + ", " + applicant.name.firstName;
+        div += "Officer " + applicant.name.lastName + ", " + applicant.name.firstName;
       }
       div += "</div>";
 
@@ -110,7 +118,13 @@
       }
       div += "</div>";
 
-      div += "<div class='container'>" + contract.arbiterId + "</div>";
+      div += "<div class='container'>";
+      getArbiter(contract.arbiterId);
+      if (applicant) {
+        div += "Judge " + arbiter.personalInfo.lastName + ", " + arbiter.personalInfo.firstName;
+      }
+      div += "</div>";
+
       div += "<div class='container'>" + contract.custodianId + "</div>";
       div += "<div class='container'>" + contract.tokenId + "</div>";
       div += "</div>";

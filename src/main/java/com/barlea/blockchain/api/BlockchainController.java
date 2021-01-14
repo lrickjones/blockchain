@@ -210,7 +210,9 @@ public class BlockchainController {
 		verifications.addTransaction(applicant.getUuid(), authority.getUuid(), authority);
 		// create block and add to verification block chain and create contract
 		Contract contract = Contract.builder().applicantId(applicant.getUuid())
+				.currentStatus(Contract.ACCOUNT_REQUEST)
 				.authorityId(authority.getUuid())
+				.arbiterId(authority.getArbiterId())
 				.lastVerification(verificationRecord().getIndex())
 				.build();
 		// add contract transaction to requests

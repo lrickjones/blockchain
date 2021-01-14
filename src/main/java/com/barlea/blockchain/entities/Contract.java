@@ -10,7 +10,12 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Contract extends Entity {
-    static public String[] status = {"account request","waiting review","passed review","failed review","token generated","access denied"};
+    static public String ACCOUNT_REQUEST = "account request";
+    static public String WAITING_REVIEW = "waiting review";
+    static public String PASSED_REVIEW = "passed review";
+    static public String FAILED_REVIEW = "failed review";
+    static public String TOKEN_GENERATED = "token generated";
+    static public String ACCESS_DENIED = "access denied";
 
     private String applicantId;
 
