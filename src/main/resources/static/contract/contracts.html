@@ -23,16 +23,19 @@
                 <a class="nav-link" href="#">Validations</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/contract/contracts.html">Contracts</a>
+                <a class="nav-link" href="/contract/contracts.html"><b>Contracts</b></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#"><b>Applicant</b></a>
+                <a class="nav-link" href="#">Applicant</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Arbiter</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Custodian</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="http://localhost:8080">Log Out</a>
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
@@ -43,24 +46,10 @@
 </nav>
 <br>
 <div class="container">
-
-    <div class="wrapper fadeInDown">
-        <div id="formContent">
-            <!-- Tabs Titles -->
-            <div class="h3 container text-secondary fadeIn first">Request Form</div>
-            <!-- Login Form -->
-            <div id="error" class="text-danger"></div>
-            <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
-            <input type="password" id="password" class="fadeIn second hidden" name="password" placeholder="password">
-            <input type="text" id="authName" class="fadeIn third" name="authName" placeholder="authority name">
-            <input type="password" id="authPassword" class="fadeIn third hidden" name="authPassword" placeholder="authorization code">
-            <input  type="button" class="fadeIn fourth" onclick="validate()" value="Request Account Information">
-
-        </div>
-    </div>
-
+    <div id="contracts"></div>
 </div>
 </body>
+
 <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -68,26 +57,65 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 <script>
-   function validate() {
-     var url_string = window.location.href;
-     var url = new URL(url_string);
-     var authorityUuId = url.searchParams.get("authorityUuId");
-     var applicantUuId = url.searchParams.get("applicantUuId");
-     var userName = document.getElementById("userName").value;
-     var password = document.getElementById("password").value;
-     var authName = document.getElementById("authName").value;
-     var authPassword = document.getElementById("authPassword").value;
-         $.ajax({
-            type : "POST",
-            url : "/contract/applicant/request_token?userName="+userName+"&password="+password+"&applicantUuId="+applicantUuId+"&authName="+authName+"&authPassword="+authPassword+"&authorityUuId="+authorityUuId,
-            success : function(data) {
-                alert("Request for account data sent");
-            },
-            error : function(xhr) {
-                alert(xhr.status);
-            }
-         });
-     }
+    $.ajaxSetup({
+        async: false
+    });
+
+    $(document).ready(function() {
+      $.getJSON("/register/active", function(result){
+          $.each(result, function(key,value) {
+             addContract(value.contractIndex,value.contractId);
+          });
+       });
+    });
+
+   function addContract(index, id) {
+      $.getJSON("/request/instance?index=" + index + "&id=" + id, function(result){
+            renderContract(result);
+       });
+   }
+
+   var applicant;
+   function getApplicant(id) {
+      if (!id) applicant =  null;
+      $.getJSON("/applicant/find?uuid=" + id, function(result){
+            applicant = result;
+       });
+   }
+
+   var authority;
+   function getAuthority(id) {
+      if (!id) authority =  null;
+      $.getJSON("/authority/find?uuid=" + id, function(result){
+            authority = result;
+       });
+   }
+
+   function renderContract(contract) {
+      var div = "<div class='container border border-primary rounded'>";
+      div += "<div class='container'>" + contract.currentStatus + "</div>";
+      div += "<div class='container'>" + contract.explanation + "</div>";
+
+      div += "<div class='container'>";
+      getApplicant(contract.applicantId);
+      if (applicant) {
+        div += applicant.name.lastName + ", " + applicant.name.firstName;
+      }
+      div += "</div>";
+
+      div += "<div class='container'>";
+      getAuthority(contract.authorityId);
+      if (authority) {
+        div += authority.authorityType + ": " + authority.description;
+      }
+      div += "</div>";
+
+      div += "<div class='container'>" + contract.arbiterId + "</div>";
+      div += "<div class='container'>" + contract.custodianId + "</div>";
+      div += "<div class='container'>" + contract.tokenId + "</div>";
+      div += "</div>";
+      $("#contracts").append(div);
+   }
 
 </script>
 </html>

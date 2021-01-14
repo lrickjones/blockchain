@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Private blockchain API
@@ -62,6 +64,22 @@ public class BlockchainController {
 	@GetMapping("/register/chain")
 	public ChainResponse registerFullChain() {
 		return ChainResponse.builder().chain(register.getChain()).length(register.getChain().size()).build();
+	}
+
+	@GetMapping("/register/active")
+	public List<ActiveContract> getActiveContractList() {
+		List<ActiveContract> result = new ArrayList<>();
+
+		Block block = register.lastBlock();
+		List<Transaction> transactions = block.getTransactions();
+		for (Transaction t: transactions) {
+			Entity e = t.getEntity();
+			if (e instanceof ActiveContract) {
+				result.add((ActiveContract) e);
+			}
+		}
+
+		return result;
 	}
 
 	@PostMapping("/register/transaction")
@@ -148,6 +166,22 @@ public class BlockchainController {
 	@GetMapping("/request/chain")
 	public ChainResponse requestFullChain() {
 		return ChainResponse.builder().chain(requests.getChain()).length(requests.getChain().size()).build();
+	}
+
+	@GetMapping("/request/instance")
+	public Contract getContractRequest(Integer index, String id) {
+		Contract result = null;
+		Block block = requests.blockAt(index);
+		if (block == null) return null;
+		for (Transaction t: block.getTransactions()) {
+			if (t.getEntity().getUuid().equals(id)) {
+				Entity e = t.getEntity();
+				if (e instanceof Contract) {
+					result = (Contract) e;
+				}
+			}
+		}
+		return result;
 	}
 
 	@PostMapping("/request/transaction")
