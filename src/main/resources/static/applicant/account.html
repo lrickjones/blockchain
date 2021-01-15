@@ -62,12 +62,8 @@
     <div class="h3 container text-secondary">Here are your pending work items:</div>
 
     <div class="wrapper fadeInDown">
-        <div class="formContent">
-            <form action="/applicant/process.html">
-                <div id="workItems" class="container btn-group btn-group-toggle fadeIn first" data-toggle="buttons"></div>
-                <input type="submit" class="fadeIn second" value="Process Selected Item">
-                <input type="hidden" id="applicantUuId" name="applicantUuId">
-            </form>
+        <div class="container-fluid">
+            <div id="workItems" class="container-fluid fadeIn first"></div>
         </div>
     </div>
 
@@ -81,22 +77,23 @@
 
 <script>
 
+   var applicantUuId
+
    $(document).ready(function() {
      var url_string = window.location.href;
      var url = new URL(url_string);
-     var uuid = url.searchParams.get("applicantUuId");
-     if (!uuid) {
+     applicantUuId = url.searchParams.get("applicantUuId");
+     if (!applicantUuId) {
          history.go(-1);
      } else {
          $.ajax({
             type : "GET",
-            url : "/applicant/find?uuid=" + uuid,
+            url : "/applicant/find?uuid=" + applicantUuId,
             success : function(value) {
                 if (!value) {
                     alert("Applicant not found");
                 } else {
                     $("#firstName").append(value.name.firstName);
-                    document.getElementById("applicantUuId").value = value.uuid;
                     getAuthorityItems();
                 }
             },
@@ -116,13 +113,16 @@
    }
 
    function addAuthorityItem(uuid, authorityType, description, name) {
-      var div = "<label class='btn btn-secondary'>";
-      div += "<H4>" + authorityType + "</H4>";
-      div += "<input type='radio' id='" + uuid + "' name='authorityUuId' value='"+ uuid +"'>";
-      div += "<H5>" + name.lastName + ", " + name.firstName + " " + name.middleName + "</H5>";
+      var url = "/applicant/process.html?applicantUuId" + applicantUuId + "&authorityUuId=" + uuid;
+      var div = "<div class='container-fluid w-100 bg-dark p-2 rounded' style='box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);'>";
+      div += "<a class='container-fluid w-100 btn bg-secondary fadeIn second' href='" + url + "' role='button'>";
+      div += "<div class='h3 text-light'>" + authorityType + "</div>";
+      div += "<div class='h4 text-light'>" + name.lastName + ", " + name.firstName + " " + name.middleName + "</div>";
       div += description;
-      div += "</label>";
+      div += "</a></div>";
       $("#workItems").append(div);
    }
+
+
 </script>
 </html>
