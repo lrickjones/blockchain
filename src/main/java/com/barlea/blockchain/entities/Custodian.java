@@ -16,7 +16,7 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 public class Custodian extends Entity {
     @NotEmpty
-    private String id;
+    private String name;
 
     @NotEmpty
     private Address address;

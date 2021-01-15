@@ -1,9 +1,6 @@
 package com.barlea.blockchain.config;
 
-import com.barlea.blockchain.entities.Applicant;
-import com.barlea.blockchain.entities.Arbiter;
-import com.barlea.blockchain.entities.Authority;
-import com.barlea.blockchain.entities.Credentials;
+import com.barlea.blockchain.entities.*;
 import com.barlea.blockchain.service.Hasher;
 import com.barlea.blockchain.service.Rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,6 +37,13 @@ public class Initialize implements ApplicationListener<ApplicationStartedEvent> 
                 "firstName","Wyatt",
                 "middleName","P",
                 "lastName","Earp");
+
+        /*Custodian custodian =*/ Rest.post("http://localhost:8080/custodian/add",Custodian.class,
+                "name","U-Face",
+                "address1","123 This Place",
+                "state","NW",
+                "city","Erehwon",
+                "zip","12345");
 
         Credentials auths = Credentials.builder().userName("federalcourt").password("fedPass123").build();
         String authorityId;
