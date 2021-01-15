@@ -40,6 +40,10 @@ h2 {
   padding: 20px;
 }
 
+.shadow {
+    box-shadow: 20px 30px grey;
+}
+
 #formContent {
   -webkit-border-radius: 10px 10px 10px 10px;
   border-radius: 10px 10px 10px 10px;

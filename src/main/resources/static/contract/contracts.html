@@ -99,35 +99,53 @@
        });
    }
 
-   function renderContract(contract) {
-      var div = "<div class='container border border-primary rounded'>";
-      div += "<div class='container'>" + contract.currentStatus + "</div>";
-      div += "<div class='container'>" + contract.explanation + "</div>";
+  var custodian;
+   function getCustodian(id) {
+      if (!id) custodian =  null;
+      $.getJSON("/custodian/find?uuid=" + id, function(result){
+            custodian = result;
+       });
+   }
 
-      div += "<div class='container'>";
+   function renderContract(contract) {
+      var div = "<div class='container border border-dark bg-secondary rounded text-light p-4' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
+      div += "<div class='container row'>"
+      div += "<div class='col-flex bg-light text-dark mr-4 p-2 h4 rounded-left float-left text-center'>" + contract.currentStatus + "</div>";
+      div += "<div class='col-flex'>";
+      if (contract.explanation) {
+        div += "<div>" + contract.explanation + "</div>";
+      }
+
+      div += "<div>";
       getApplicant(contract.applicantId);
       if (applicant) {
-        div += "Officer " + applicant.name.lastName + ", " + applicant.name.firstName;
+        div += "<b>Officer: </b> " + applicant.name.lastName + ", " + applicant.name.firstName;
       }
       div += "</div>";
 
-      div += "<div class='container'>";
+      div += "<div>";
       getAuthority(contract.authorityId);
       if (authority) {
-        div += authority.authorityType + ": " + authority.description;
+        div += "<b>" + authority.authorityType + ": </b>" + authority.description;
       }
       div += "</div>";
 
-      div += "<div class='container'>";
+      div += "<div>";
       getArbiter(contract.arbiterId);
       if (applicant) {
-        div += "Judge " + arbiter.personalInfo.lastName + ", " + arbiter.personalInfo.firstName;
+        div += "<b>Judge: </b> " + arbiter.personalInfo.lastName + ", " + arbiter.personalInfo.firstName;
       }
       div += "</div>";
 
-      div += "<div class='container'>" + contract.custodianId + "</div>";
-      div += "<div class='container'>" + contract.tokenId + "</div>";
+      div += "<div>";
+      getCustodian(contract.custodianId);
+      if (custodian) {
+        div += "<b>Custodian: </b> " + custodian;
+      }
       div += "</div>";
+
+      div += "<div>" + contract.tokenId + "</div>";
+      div += "</div></div></div>";
       $("#contracts").append(div);
    }
 
