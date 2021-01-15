@@ -113,7 +113,7 @@
    }
 
    function addAuthorityItem(uuid, authorityType, description, name) {
-      var url = "/applicant/process.html?applicantUuId" + applicantUuId + "&authorityUuId=" + uuid;
+      var url = "/applicant/process.html?applicantUuId=" + applicantUuId + "&authorityUuId=" + uuid;
       var div = "<div class='container-fluid w-100 bg-dark p-2 rounded' style='box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);'>";
       div += "<a class='container-fluid w-100 btn bg-secondary fadeIn second' href='" + url + "' role='button'>";
       div += "<div class='h3 text-light'>" + authorityType + "</div>";
