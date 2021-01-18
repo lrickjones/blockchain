@@ -18,6 +18,7 @@ public class Initialize implements ApplicationListener<ApplicationStartedEvent> 
 
     @Override
     public void onApplicationEvent(@NotNull ApplicationStartedEvent event) {
+
         Credentials creds = Credentials.builder().userName("johndoe").password("myPass123").build();
         String validationId;
         try {

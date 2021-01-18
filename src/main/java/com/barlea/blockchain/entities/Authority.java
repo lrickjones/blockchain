@@ -11,6 +11,8 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 public class Authority extends Entity{
 
+    @Builder.Default private final String type = "authority";
+
     @NotEmpty
     private String validationId;
 

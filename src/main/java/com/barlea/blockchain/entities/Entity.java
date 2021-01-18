@@ -5,13 +5,12 @@ import javax.validation.constraints.NotEmpty;
 import java.util.UUID;
 
 /**
- * Represents a law enforcement officer
+ * Root class for entities
  *
- * @author Praveendra Singh
+ * @author L Rick Jones
  *
  */
 @Data
-@AllArgsConstructor
 public class Entity {
 
     public Entity() {
@@ -20,4 +19,5 @@ public class Entity {
 
     @NotEmpty
     private String uuid;
+
 }

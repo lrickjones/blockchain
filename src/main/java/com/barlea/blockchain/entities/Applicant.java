@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 /**
  * Represents a law enforcement officer
  *
- * @author Praveendra Singh
+ * @author L Rick Jones
  *
  */
 @EqualsAndHashCode(callSuper = true)
@@ -16,6 +16,8 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Applicant extends Entity{
+
+    @Builder.Default private final String type = "applicant";
 
     /*
     Hasher from applicants authentication credentials, will be tested against applicant registry

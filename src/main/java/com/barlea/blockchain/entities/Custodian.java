@@ -15,6 +15,9 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Custodian extends Entity {
+
+    @Builder.Default private final String type = "custodian";
+
     @NotEmpty
     private String name;
 

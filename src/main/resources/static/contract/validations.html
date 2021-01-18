@@ -20,10 +20,10 @@
                 <a class="nav-link" href="http://localhost:8080">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/contract/validations.html">Validations</a>
+                <a class="nav-link" href="/contract/validations.html"><b>Validations</b></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/contract/contracts.html"><b>Contracts</b></a>
+                <a class="nav-link" href="/contract/contracts.html">Contracts</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Applicant</a>
@@ -62,89 +62,54 @@
     });
 
     $(document).ready(function() {
-      $.getJSON("/register/active", function(result){
+      $.getJSON("/verification/chain", function(result){
           $.each(result, function(key,value) {
-             addContract(value.contractIndex,value.contractId);
+             if (key.localeCompare("chain") == 0) {
+                $.each(value, function(k, block) {
+                    if (block.index > 1) renderValidation(block);
+                });
+             }
           });
        });
     });
 
-   function addContract(index, id) {
-      $.getJSON("/request/instance?index=" + index + "&id=" + id, function(result){
-            renderContract(result);
-       });
-   }
-
-   var applicant;
-   function getApplicant(id) {
-      if (!id) applicant =  null;
-      $.getJSON("/applicant/find?uuid=" + id, function(result){
-            applicant = result;
-       });
-   }
-
-   var authority;
-   function getAuthority(id) {
-      if (!id) authority =  null;
-      $.getJSON("/authority/find?uuid=" + id, function(result){
-            authority = result;
-       });
-   }
-
-   var arbiter;
-   function getArbiter(id) {
-      if (!id) arbiter =  null;
-      $.getJSON("/arbiter/find?uuid=" + id, function(result){
-            arbiter = result;
-       });
-   }
-
-  var custodian;
-   function getCustodian(id) {
-      if (!id) custodian =  null;
-      $.getJSON("/custodian/find?uuid=" + id, function(result){
-            custodian = result;
-       });
-   }
-
-   function renderContract(contract) {
+   function renderApplicant(applicant) {
       var div = "<div class='container border border-dark bg-secondary rounded text-light p-4' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
       div += "<div class='container row'>"
-      div += "<div class='col-flex bg-light text-dark mr-4 p-2 h4 rounded-left float-left text-center'>" + contract.currentStatus + "</div>";
+      div += "<div class='col-flex bg-light text-dark mr-4 p-2 h4 rounded-left float-left text-center'>Applicant</div>";
       div += "<div class='col-flex'>";
-      if (contract.explanation) {
-        div += "<div>" + contract.explanation + "</div>";
-      }
+      div += "<div><b>Officer: </b>" + applicant.name.lastName + ", " + applicant.name.firstName + " " + applicant.name.middleName.charAt(0) + "</div>";
+      div += "</div></div></div>";
+      return div;
+   }
 
-      div += "<div>";
-      getApplicant(contract.applicantId);
-      if (applicant) {
-        div += "<b>Officer: </b> " + applicant.name.lastName + ", " + applicant.name.firstName;
-      }
-      div += "</div>";
+   function renderAuthority(authority) {
+      var div = "<div class='container border border-dark bg-secondary rounded text-light p-4' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
+      div += "<div class='container row'>"
+      div += "<div class='col-flex bg-light text-dark mr-4 p-2 h4 rounded-left float-left text-center'>Authority</div>";
+      div += "<div class='col-flex'>";
+      div += "<div><b>" + authority.authorityType + ": </b>" + authority.subject.name.lastName + ", " + authority.subject.name.firstName + " " + authority.subject.name.middleName.charAt(0) + "</div>";
+      div += "</div></div></div>";
+      return div;
+   }
 
-      div += "<div>";
-      getAuthority(contract.authorityId);
-      if (authority) {
-        div += "<b>" + authority.authorityType + ": </b>" + authority.description;
-      }
-      div += "</div>";
+   function renderValidation(block) {
+      var div = "<div class='container border border-dark bg-secondary rounded text-light p-4' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
+      div += "<div class='container row'>"
+      var date = new Date(block.timestamp);
+      div += "<div class='col-flex bg-light text-dark mr-4 p-2 h4 rounded-left float-left text-center'>" + date.toString() + "</div>";
+      div += "<div class='col-flex'>";
 
-      div += "<div>";
-      getArbiter(contract.arbiterId);
-      if (applicant) {
-        div += "<b>Judge: </b> " + arbiter.personalInfo.lastName + ", " + arbiter.personalInfo.firstName;
-      }
-      div += "</div>";
+      $.each(block.transactions, function(key,transaction) {
+          if (transaction.entity.type.localeCompare("applicant") == 0) {
+            div += renderApplicant(transaction.entity);
+          } else if (transaction.entity.type.localeCompare("authority") == 0) {
+            div += renderAuthority(transaction.entity);
+          }
+      });
 
-      div += "<div>";
-      getCustodian(contract.custodianId);
-      if (custodian) {
-        div += "<b>Custodian: </b> " + custodian;
-      }
-      div += "</div>";
 
-      div += "<div>" + contract.tokenId + "</div>";
+
       div += "</div></div></div>";
       $("#contracts").append(div);
    }

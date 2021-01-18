@@ -15,6 +15,9 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Arbiter extends Entity {
+
+    @Builder.Default private final String type = "arbiter";
+
     @NotEmpty
     private String jurisdiction;
 

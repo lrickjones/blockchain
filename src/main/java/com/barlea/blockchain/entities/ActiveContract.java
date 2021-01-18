@@ -11,6 +11,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class ActiveContract extends Entity {
 
+    @Builder.Default private final String type = "active-contract";
+
     @NotNull
     private int contractIndex;
 

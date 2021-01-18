@@ -10,6 +10,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Contract extends Entity {
+
+    @Builder.Default private final String type = "contract";
+
     static public String ACCOUNT_REQUEST = "account request";
     static public String WAITING_REVIEW = "waiting review";
     static public String PASSED_REVIEW = "passed review";
