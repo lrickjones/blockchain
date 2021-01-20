@@ -1,0 +1,142 @@
+    $.ajaxSetup({
+        async: false
+    });
+
+
+    function renderAllContracts(paramName,paramValue) {
+      $.getJSON("/register/active", function(result){
+          $.each(result, function(key,value) {
+             addContract(value.contractIndex,value.contractId,paramName,paramValue);
+          });
+       });
+    }
+
+    function renderContractsForApplicant(applicantId,paramName,paramValue) {
+      $.getJSON("/register/active", function(result){
+          $.each(result, function(key,value) {
+             addContractForApplicant(value.contractIndex,value.contractId,applicantId,paramName,paramValue);
+          });
+       });
+    }
+
+   function addContract(index, id, paramName,paramValue) {
+      $.getJSON("/request/instance?index=" + index + "&id=" + id, function(result){
+            renderContract(result, paramName,paramValue);
+       });
+   }
+
+  function addContractForApplicant(index, id, applicantId, paramName,paramValue) {
+     $.getJSON("/request/instance?index=" + index + "&id=" + id, function(result){
+           if (result.applicantId.localeCompare(applicantId) == 0) renderContract(result,paramName,paramValue);
+      });
+  }
+
+   var applicant;
+   function getApplicant(id) {
+      if (!id) applicant =  null;
+      $.getJSON("/applicant/find?uuid=" + id, function(result){
+            applicant = result;
+       });
+   }
+
+   var authority;
+   function getAuthority(id) {
+      if (!id) authority =  null;
+      $.getJSON("/authority/find?uuid=" + id, function(result){
+            authority = result;
+       });
+   }
+
+   var arbiter;
+   function getArbiter(id) {
+      if (!id) arbiter =  null;
+      $.getJSON("/arbiter/find?uuid=" + id, function(result){
+            arbiter = result;
+       });
+   }
+
+  var custodian;
+   function getCustodian(id) {
+      if (!id) custodian =  null;
+      $.getJSON("/custodian/find?uuid=" + id, function(result){
+            custodian = result;
+       });
+   }
+
+   function addAuthorityItem(uuid, authorityType, description, name) {
+      var url = "/applicant/process.html?applicantUuId=" + applicantUuId + "&authorityUuId=" + uuid;
+      var div = "<div class='container-fluid w-100 bg-dark p-1 rounded' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
+      div += "<a class='container-fluid w-100 btn bg-secondary fadeIn second' href='" + url + "' role='button'>";
+      div += "<div class='h3 text-light'>" + authorityType + "</div>";
+      div += "<div class='h4 text-light'>" + name.lastName + ", " + name.firstName + " " + name.middleName + "</div>";
+      div += description;
+      div += "</a></div>";
+      $("#workItems").append(div);
+   }
+
+   function renderContract(contract, paramName, paramValue) {
+      var url = "";
+      var instructions = "";
+      if (contract.currentStatus.localeCompare("account request") == 0) {
+        url = "/applicant/account-request.html?contractUuId=" + contract.uuid + "&" + paramName + "=" + paramValue;
+        instructions = "Request account details from service provider"
+      }
+      var div = "<div class='container-fluid w-100 p-1 rounded bg-darkblue' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
+      div += "<a class='container-fluid w-100 btn fadeIn second bg-teal' href='" + url + "' role='button'>";
+      div += "<div class='col-flex mr-4 p-2 h4 rounded-left float-left text-center text-darkblue bg-lightblue'>" + contract.currentStatus + "</div>";
+      div += "<div class='col-flex text-left text-barlea'>";
+      if (instructions) {
+        div += "<div class='h5 text-lightblue'>" + instructions + "</div>";
+      }
+
+      div += "<div>";
+      getApplicant(contract.applicantId);
+      if (applicant) {
+        div += "<b>Officer: </b> " + applicant.name.lastName + ", " + applicant.name.firstName;
+      }
+      div += "</div>";
+
+      div += "<div>";
+      getAuthority(contract.authorityId);
+      div += "<div class='row border border-dark rounded p-2'> "
+      if (authority) {
+        custodian = "";
+        if (authority.custodianId) {
+            getCustodian(authority.custodianId);
+        }
+        div += "<div class='h6'>" + authority.authorityType + "</div>";
+        div += "<div class='container'>" + authority.documentId + "</div>"
+        div += "<div class='container'>" + authority.description + "</div>"
+        var custodianName = "";
+        if (custodian) {
+            custodianName = custodian.name;
+        }
+        var subjectName = "";
+        if (authority.subject && authority.subject.name) {
+            subjectName = authority.subject.name.lastName + ", " + authority.subject.name.firstName;
+        }
+        div += "<div class='container'>Subject: " + subjectName + "; Service Provider: " + custodianName + "</div>";
+      }
+      div += "</div></div>";
+
+      div += "<div>";
+      getArbiter(contract.arbiterId);
+      if (applicant) {
+        div += "<b>Judge: </b> " + arbiter.personalInfo.lastName + ", " + arbiter.personalInfo.firstName;
+      }
+      div += "</div>";
+
+      div += "<div>";
+      custodian = "";
+      getCustodian(contract.custodianId);
+      if (custodian) {
+        div += "<b>Custodian: </b> " + custodian;
+      }
+      div += "</div>";
+
+      if (contract.tokenId) {
+        div += "<div><b>Account Token: </b>" + contract.tokenId + "</div>";
+      }
+      div += "</div></a></div>";
+      $("#contracts").append(div);
+   }

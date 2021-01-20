@@ -16,19 +16,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class Initialize implements ApplicationListener<ApplicationStartedEvent> {
 
+    static private String generateValidationFromCredentials(String userName, String password) {
+        Credentials creds = Credentials.builder().userName(userName).password(password).build();
+        try {
+            return Hasher.hash(creds.toString());
+        } catch (JsonProcessingException e) {
+            return "Invalid";
+        }
+    }
+
     @Override
     public void onApplicationEvent(@NotNull ApplicationStartedEvent event) {
 
-        Credentials creds = Credentials.builder().userName("johndoe").password("myPass123").build();
-        String validationId;
-        try {
-            validationId = Hasher.hash(creds.toString());
-        } catch (JsonProcessingException e) {
-            validationId = "Invalid";
-        }
         /*Applicant applicant =*/ Rest.post("http://localhost:8080/applicant/add",Applicant.class,
                 "requestType","test",
-                "validationId",validationId,
+                "validationId",generateValidationFromCredentials("johndoe","myPass123"),
                 "firstName","John",
                 "middleName","J",
                 "lastName","Doe");
@@ -39,25 +41,21 @@ public class Initialize implements ApplicationListener<ApplicationStartedEvent> 
                 "middleName","P",
                 "lastName","Earp");
 
-        /*Custodian custodian =*/ Rest.post("http://localhost:8080/custodian/add",Custodian.class,
-                "name","U-Face",
+        Custodian custodian = Rest.post("http://localhost:8080/custodian/add",Custodian.class,
+                "name","MyFace",
+                "validationId", generateValidationFromCredentials("myface","mfPass123"),
                 "address1","123 This Place",
                 "state","NW",
                 "city","Erehwon",
                 "zip","12345");
 
-        Credentials auths = Credentials.builder().userName("federalcourt").password("fedPass123").build();
-        String authorityId;
-        try {
-            authorityId = Hasher.hash(auths.toString());
-        } catch (JsonProcessingException e) {
-            authorityId = "Invalid";
-        }
-        /*Authority authority =*/ Rest.post("http://localhost:8080/authority/add",Authority.class,
+        Authority authority = Rest.post("http://localhost:8080/authority/add",Authority.class,
                 "arbiterId", arbiter.getUuid(),
-                "validationId",authorityId,
+                "custodianId", custodian.getUuid(),
+                "validationId",generateValidationFromCredentials("federalcourt","fedPass123"),
                 "authorityType","Warrant",
-                "description","Access to contacts made over last 6 months, Case# 12345678",
+                "documentId","Case-12345678-RNM",
+                "description","Access to contacts made over last 6 months",
                 "homeDomicile.address1","123 East W Street",
                 "homeDomicile.state", "NM",
                 "homeDomicile.city", "Roswell",
@@ -67,6 +65,11 @@ public class Initialize implements ApplicationListener<ApplicationStartedEvent> 
                 "name.lastName","Smith",
                 "birthDate","07/04/1960",
                 "homePhone","555-667-8309");
+
+        /* Contract contract = */ Rest.post("http://localhost:8080/contract/create",Authority.class,
+                "authorityId", authority.getUuid());
+
+
 
     }
 }

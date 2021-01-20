@@ -9,7 +9,7 @@
 </head>
 <body>
 <nav id="navbar" class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" href="/"><img src="../img/barlea.png" style="width:80px;height:100px;" alt="BARLEA Logo"></a>
+    <a class="navbar-brand" href="#"><img src="../img/barlea.png" style="width:100px;height:100px;" alt="BARLEA Logo"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -17,7 +17,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="http://localhost:8080">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/contract/validations.html">Validations</a>
@@ -26,13 +26,13 @@
                 <a class="nav-link" href="/contract/contracts.html">Contracts</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/index.html"><b>Applicant</b></a>
+                <a class="nav-link" href="#"><b>Applicant</b></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/arbiter/login.html">Arbiter</a>
+                <a class="nav-link" href="#">Arbiter</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/custodian/login.html">Custodian</a>
+                <a class="nav-link" href="#">Custodian</a>
             </li>
             <!--li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -56,14 +56,14 @@
     </div>
 </nav>
 
-<div class="h2 container text-darkblue">Welcome <span id="firstName"></span>, </div>
+<div class="h2 container text-primary">Welcome <span id="firstName"></span>, </div>
 <br>
 <div class="container">
-    <div class="h3 container text-teal">Here are your pending work items:</div>
+    <div class="h3 container text-secondary">Here are your pending work items:</div>
 
     <div class="wrapper fadeInDown">
         <div class="container-fluid">
-            <div id="contracts"></div>
+            <div id="workItems" class="container-fluid fadeIn first"></div>
         </div>
     </div>
 
@@ -75,36 +75,26 @@
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-<script src="/js/blockchain.js"></script>
-
 <script>
+
+   var applicantUuId
 
    $(document).ready(function() {
      var url_string = window.location.href;
      var url = new URL(url_string);
-     applicantId = url.searchParams.get("applicantUuId");
-     renderAllContracts("applicantUuId",applicantId);
-     $.getJSON("/applicant/find?uuid=" + applicantId, function(value){
-        if (!value) {
-            alert("Applicant not found");
-        } else {
-            $("#firstName").append(value.name.firstName);
-            //getAuthorityItems();
-        }
-     });
-     /*
-     if (!applicantId) {
+     custodianUuId = url.searchParams.get("custodianUuId");
+     if (!custodianUuId) {
          history.go(-1);
      } else {
          $.ajax({
             type : "GET",
-            url : "/applicant/find?uuid=" + applicantId,
+            url : "/custodian/find?uuid=" + custodianUuId,
             success : function(value) {
                 if (!value) {
-                    alert("Applicant not found");
+                    alert("Company not found");
                 } else {
-                    $("#firstName").append(value.name.firstName);
-                    //getAuthorityItems();
+                    $("#firstName").append(value.name);
+                    getPendingContracts();
                 }
             },
             error : function(xhr, ajaxOptions, thrownError) {
@@ -112,8 +102,29 @@
             }
          });
      }
-     */
    });
+
+   function getPendingContracts() {
+   /*
+      $.getJSON("/authority/list", function(result){
+          $.each(result, function(key,value) {
+             addAuthorityItem(value.uuid, value.authorityType, value.description, value.subject.name);
+          });
+       });
+   */
+   }
+
+   function addAuthorityItem(uuid, authorityType, description, name) {
+      var url = "/applicant/process.html?applicantUuId=" + applicantUuId + "&authorityUuId=" + uuid;
+      var div = "<div class='container-fluid w-100 bg-dark p-2 rounded' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
+      div += "<a class='container-fluid w-100 btn bg-secondary fadeIn second' href='" + url + "' role='button'>";
+      div += "<div class='h3 text-light'>" + authorityType + "</div>";
+      div += "<div class='h4 text-light'>" + name.lastName + ", " + name.firstName + " " + name.middleName + "</div>";
+      div += description;
+      div += "</a></div>";
+      $("#workItems").append(div);
+   }
+
 
 </script>
 </html>

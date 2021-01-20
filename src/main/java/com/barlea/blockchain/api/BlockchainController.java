@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Private blockchain API
@@ -94,19 +95,16 @@ public class BlockchainController {
 		boolean exists = false;
 		if (block.getIndex() > 1) {
 			for (Transaction t:block.getTransactions()) {
-				if (t.getEntity().getUuid().equals(uuid)) {
-					if (t.getEntity() instanceof ActiveContract) {
-						((ActiveContract) t.getEntity()).setContractIndex(index);
-						exists = true;
-					}
+				// copy over every contract except one being updated
+				if (!((ActiveContract)t.getEntity()).getContractId().equals(uuid)) {
+					register.addTransaction(t.getSender(),t.getRecipient(),t.getEntity());
 				}
-				register.addTransaction(t.getSender(),t.getRecipient(),t.getEntity());
 			}
 		}
-		if (!exists) {
-			ActiveContract activeContract = ActiveContract.builder().contractId(uuid).contractIndex(index).build();
-			register.addTransaction(sender,receiver,activeContract);
-		}
+
+		ActiveContract activeContract = ActiveContract.builder().contractId(uuid).contractIndex(index).build();
+		register.addTransaction(sender,receiver,activeContract);
+
 		//TODO: Does an exception lead to orphaned transactions?
 		try {
 			return registerRecord();
@@ -191,8 +189,21 @@ public class BlockchainController {
 		return TransactionResponse.builder().index(index).build();
 	}
 
-	@PostMapping("/contract/applicant/request_token")
-	public Contract requestAccessToken(String userName, String password, String applicantUuId,String authName, String authPassword, String authorityUuId) throws JsonProcessingException {
+	@PostMapping("/contract/create")
+	public Contract createNewContract(@RequestParam String authorityId) throws JsonProcessingException {
+		Contract contract = Contract.builder().currentStatus(Contract.ACCOUNT_REQUEST).authorityId(authorityId).build();
+		// add contract transaction to requests
+		requests.addTransaction(authorityId, null,contract);
+		// update the registry that there is a new or updated contract
+		updateRegister(authorityId,null,contract.getUuid(),requestRecord().getIndex());
+		return contract;
+	}
+
+	@PostMapping("/contract/account-request")
+	public Contract requestAccessToken(String contractUuId, String userName, String password, String applicantUuId,String authName, String authPassword) throws JsonProcessingException {
+		// find contract, if active
+		Contract contract = findContract(contractUuId);
+		if (contract == null) return null;
 		// Find applicant
 		Applicant applicant = Rest.get("http://localhost:8080/applicant/find",Applicant.class,"uuid",applicantUuId);
 		if (applicant == null) return null;
@@ -200,7 +211,7 @@ public class BlockchainController {
 		String applicantId = Hasher.hash(Credentials.builder().userName(userName).password(password).build().toString());
 		if (!applicantId.equals(applicant.getValidationId())) return null;
 		// Find authority
-		Authority authority = Rest.get("http://localhost:8080/authority/find",Authority.class,"uuid",authorityUuId);
+		Authority authority = Rest.get("http://localhost:8080/authority/find",Authority.class,"uuid",contract.getAuthorityId());
 		if (authority == null) return null;
 		// validate authority
 		String validationId = Hasher.hash(Credentials.builder().userName(authName).password(authPassword).build().toString());
@@ -208,15 +219,14 @@ public class BlockchainController {
 		// record both transactions in the verification record
 		verifications.addTransaction(applicant.getUuid(), authority.getUuid(), applicant);
 		verifications.addTransaction(applicant.getUuid(), authority.getUuid(), authority);
-		// create block and add to verification block chain and create contract
-		Contract contract = Contract.builder().applicantId(applicant.getUuid())
-				.currentStatus(Contract.ACCOUNT_REQUEST)
-				.authorityId(authority.getUuid())
-				.arbiterId(authority.getArbiterId())
-				.lastVerification(verificationRecord().getIndex())
-				.build();
+		// update contract from copy (modifying contract will change the block and invalidate the chain)
+		Contract newContract = contract.toBuilder()
+			.applicantId(applicantUuId)
+			.currentStatus(Contract.GET_ACCOUNT_INFO)
+			.lastVerification(verificationRecord().getIndex())
+			.build();
 		// add contract transaction to requests
-		requests.addTransaction(applicant.getUuid(), authority.getUuid(),contract);
+		requests.addTransaction(applicant.getUuid(), authority.getUuid(),newContract);
 		// update the registry that there is a new or updated contract
 		updateRegister(applicant.getUuid(),authority.getUuid(),contract.getUuid(),requestRecord().getIndex());
 		return contract;
@@ -233,7 +243,25 @@ public class BlockchainController {
 		return result;
 	}
 
-	@GetMapping("/contract/applicant/validationId")
+	@GetMapping("/contract/find")
+	public Contract findContract(@RequestParam String uuid) {
+		// get block index
+		Block block = register.lastBlock();
+		Optional<Transaction> transaction = block.getTransactions().stream().filter(t->((ActiveContract)t.getEntity()).getContractId().equals(uuid)).findFirst();
+		if (!transaction.isPresent()) return null;
+		// get contract detail
+		ActiveContract active = (ActiveContract)transaction.get().getEntity();
+		Block contractBlock = requests.blockAt(active.getContractIndex());
+		if (contractBlock == null) return null;
+		Optional<Transaction> contractTransaction = contractBlock.getTransactions().stream().filter(t->((Contract)t.getEntity()).getUuid().equals(uuid)).findFirst();
+		if (contractTransaction.isPresent()) {
+			return (Contract) contractTransaction.get().getEntity();
+		} else {
+			return null;
+		}
+	}
+
+	@GetMapping("/utils/validationId")
 	public String generateValidationId(@RequestParam String userName, @RequestParam String password) {
 		String result;
 		try {

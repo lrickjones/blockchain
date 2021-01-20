@@ -19,6 +19,9 @@ public class Custodian extends Entity {
     @Builder.Default private final String type = "custodian";
 
     @NotEmpty
+    private String validationId;
+
+    @NotEmpty
     private String name;
 
     @NotEmpty

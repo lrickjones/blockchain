@@ -6,7 +6,7 @@ import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Contract extends Entity {
@@ -14,6 +14,7 @@ public class Contract extends Entity {
     @Builder.Default private final String type = "contract";
 
     static public String ACCOUNT_REQUEST = "account request";
+    public static final String GET_ACCOUNT_INFO = "get account info";
     static public String WAITING_REVIEW = "waiting review";
     static public String PASSED_REVIEW = "passed review";
     static public String FAILED_REVIEW = "failed review";

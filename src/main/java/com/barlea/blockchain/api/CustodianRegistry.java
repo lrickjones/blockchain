@@ -1,9 +1,6 @@
 package com.barlea.blockchain.api;
 
-import com.barlea.blockchain.entities.Address;
-import com.barlea.blockchain.entities.Authority;
-import com.barlea.blockchain.entities.Custodian;
-import com.barlea.blockchain.entities.PublicPerson;
+import com.barlea.blockchain.entities.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -21,9 +18,11 @@ public class CustodianRegistry {
     List<Custodian> custodianList = new ArrayList<>();
 
     @PostMapping("/custodian/add")
-    public Custodian addCustodian(@RequestParam String name,
+    public Custodian addCustodian(@RequestParam String validationId,
+                                  @RequestParam String name,
                                   Address address) {
         Custodian custodian = Custodian.builder()
+                .validationId(validationId)
                 .name(name)
                 .address(address)
                 .build();
@@ -37,10 +36,12 @@ public class CustodianRegistry {
     }
 
     @GetMapping("/custodian/find")
-    public Custodian findAuthority(String uuid) {
+    public Custodian findAuthority(String uuid, String validationId) {
         Optional<Custodian> custodian = Optional.empty();
         if (uuid != null && !uuid.isEmpty()) {
             custodian = custodianList.stream().filter(o -> o.getUuid().equals(uuid)).findFirst();
+        } else if (validationId != null && !validationId.isEmpty()) {
+            custodian = custodianList.stream().filter(o -> o.getValidationId().equals(validationId)).findFirst();
         }
         return custodian.orElse(null);
     }

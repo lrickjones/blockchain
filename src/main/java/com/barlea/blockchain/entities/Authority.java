@@ -19,10 +19,14 @@ public class Authority extends Entity{
     @NotEmpty
     private String authorityType;
 
+    private String documentId;
+
     private String description;
 
     @NotEmpty
     private String arbiterId;
+
+    private String custodianId;
 
     @NotEmpty
     private PublicPerson subject;

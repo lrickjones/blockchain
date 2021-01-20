@@ -2,6 +2,8 @@ package com.barlea.blockchain.service;
 
 import com.barlea.blockchain.domain.Block;
 import com.barlea.blockchain.domain.Transaction;
+import com.barlea.blockchain.entities.ActiveContract;
+import com.barlea.blockchain.entities.Contract;
 import com.barlea.blockchain.entities.Entity;
 import com.barlea.blockchain.util.BlockProofOfWorkGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -48,10 +50,10 @@ public class Blockchain {
 		return lastBlock().getIndex();
 	}
 
-	public Block createBlock(Long proof, String previusHash) throws JsonProcessingException {
+	public Block createBlock(Long proof, String previousHash) throws JsonProcessingException {
 
 		Block block = Block.builder().index(chain.size() + 1)
-				.previousHash((previusHash != null) ? previusHash : lastBlock().hash(mapper)).proof(proof)
+				.previousHash((previousHash != null) ? previousHash : lastBlock().hash(mapper)).proof(proof)
 				.timestamp(new Date().getTime()).transactions(currentTransactions).build();
 
 		// add new block to the chain.
@@ -80,6 +82,25 @@ public class Blockchain {
 		}
 		Optional<Block> result = blocks.stream().max(Comparator.comparingInt(Block::getIndex));
 		return result.map(Block::getIndex).orElse(-1);
+	}
+
+	public Entity findEntity(String uuid) {
+		List<Block> blocks = new ArrayList<>();
+		for(Block b:chain) {
+			if (b.getTransactions().stream().anyMatch(t->(t.getEntity()).getUuid().equals(uuid)))
+				blocks.add(b);
+		}
+		Optional<Block> block = blocks.stream().max(Comparator.comparingInt(Block::getIndex));
+		Optional<Transaction> transaction = Optional.empty();
+		if (block.isPresent()) {
+			transaction = block.get().getTransactions().stream().filter(t->t.getEntity().getUuid().equals(uuid)).findFirst();
+		}
+
+		if (transaction.isPresent()) {
+			return transaction.get().getEntity();
+		} else {
+			return null;
+		}
 	}
 
 	public static boolean validChain(List<Block> chain, ObjectMapper mapper) throws JsonProcessingException {

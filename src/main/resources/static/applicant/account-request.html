@@ -109,56 +109,60 @@
    $(document).ready(function() {
      var url_string = window.location.href;
      var url = new URL(url_string);
-     var uuid = url.searchParams.get("authorityUuId");
-     if (!uuid) {
-         history.go(-1);
-     } else {
-         $.ajax({
-            type : "GET",
-            url : "/authority/find?uuid=" + uuid,
-            success : function(value) {
-                if (!value) {
-                    alert("Authority not found");
-                } else {
-                    if (value.subject) {
-                        if (value.subject.name) {
-                            document.getElementById("name.firstName").value = value.subject.name.firstName;
-                            document.getElementById("name.middleName").value = value.subject.name.middleName;
-                            document.getElementById("name.lastName").value = value.subject.name.lastName;
+     var contractUuId = url.searchParams.get("contractUuId");
+     if (contractUuId) {
+          $.getJSON("/contract/find?uuid=" + contractUuId, function(contract){
+               var uuid = contract.authorityId;
+                 if (!uuid) {
+                     //history.go(-1);
+                 } else {
+                     $.ajax({
+                        type : "GET",
+                        url : "/authority/find?uuid=" + uuid,
+                        success : function(value) {
+                            if (!value) {
+                                alert("Authority not found");
+                            } else {
+                                if (value.subject) {
+                                    if (value.subject.name) {
+                                        document.getElementById("name.firstName").value = value.subject.name.firstName;
+                                        document.getElementById("name.middleName").value = value.subject.name.middleName;
+                                        document.getElementById("name.lastName").value = value.subject.name.lastName;
+                                    }
+                                    if (value.subject.homeDomicile) {
+                                        document.getElementById("homeDomicile.address1").value = value.subject.homeDomicile.address1;
+                                        document.getElementById("homeDomicile.address2").value = value.subject.homeDomicile.address2;
+                                        document.getElementById("homeDomicile.state").value = value.subject.homeDomicile.state;
+                                        document.getElementById("homeDomicile.city").value = value.subject.homeDomicile.city;
+                                        document.getElementById("homeDomicile.zip").value = value.subject.homeDomicile.zip;
+                                    }
+                                    if (value.subject.birthDate) {
+                                    }
+                                    document.getElementById("homePhone").value = value.subject.homePhone;
+                                    document.getElementById("workPhone").value = value.subject.workPhone;
+                                    if (value.subject.placeOfBirth) {
+                                        document.getElementById("placeOfBirth.address1").value = value.subject.placeOfBirth.address1;
+                                        document.getElementById("placeOfBirth.address2").value = value.subject.placeOfBirth.address2;
+                                        document.getElementById("placeOfBirth.state").value = value.subject.placeOfBirth.state;
+                                        document.getElementById("placeOfBirth.city").value = value.subject.placeOfBirth.city;
+                                        document.getElementById("placeOfBirth.zip").value = value.subject.placeOfBirth.zip;
+                                    }
+                                }
+                            }
+                        },
+                        error : function(xhr, ajaxOptions, thrownError) {
+                            alert(xhr.status + ": " + xhr.responseText);
                         }
-                        if (value.subject.homeDomicile) {
-                            document.getElementById("homeDomicile.address1").value = value.subject.homeDomicile.address1;
-                            document.getElementById("homeDomicile.address2").value = value.subject.homeDomicile.address2;
-                            document.getElementById("homeDomicile.state").value = value.subject.homeDomicile.state;
-                            document.getElementById("homeDomicile.city").value = value.subject.homeDomicile.city;
-                            document.getElementById("homeDomicile.zip").value = value.subject.homeDomicile.zip;
-                        }
-                        if (value.subject.birthDate) {
-                        }
-                        document.getElementById("homePhone").value = value.subject.homePhone;
-                        document.getElementById("workPhone").value = value.subject.workPhone;
-                        if (value.subject.placeOfBirth) {
-                            document.getElementById("placeOfBirth.address1").value = value.subject.placeOfBirth.address1;
-                            document.getElementById("placeOfBirth.address2").value = value.subject.placeOfBirth.address2;
-                            document.getElementById("placeOfBirth.state").value = value.subject.placeOfBirth.state;
-                            document.getElementById("placeOfBirth.city").value = value.subject.placeOfBirth.city;
-                            document.getElementById("placeOfBirth.zip").value = value.subject.placeOfBirth.zip;
-                        }
-                    }
-                }
-            },
-            error : function(xhr, ajaxOptions, thrownError) {
-                alert(xhr.status + ": " + xhr.responseText);
-            }
-         });
+                     });
+                 }
+          });
      }
    });
-
 
    function validate() {
      var url_string = window.location.href;
      var url = new URL(url_string);
-     var authorityUuId = url.searchParams.get("authorityUuId");
+     var contractUuId = url.searchParams.get("contractUuId");
      var applicantUuId = url.searchParams.get("applicantUuId");
      var userName = document.getElementById("userName").value;
      var password = document.getElementById("password").value;
@@ -166,7 +170,7 @@
      var authPassword = document.getElementById("authPassword").value;
          $.ajax({
             type : "POST",
-            url : "/contract/applicant/request_token?userName="+userName+"&password="+password+"&applicantUuId="+applicantUuId+"&authName="+authName+"&authPassword="+authPassword+"&authorityUuId="+authorityUuId,
+            url : "/contract/account-request?&contractUuId=" + contractUuId +"&userName="+userName+"&password="+password+"&applicantUuId="+applicantUuId+"&authName="+authName+"&authPassword="+authPassword,
             success : function(data) {
                 alert("Request for account data sent");
             },

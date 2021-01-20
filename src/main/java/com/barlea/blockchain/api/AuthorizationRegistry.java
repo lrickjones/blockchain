@@ -24,12 +24,16 @@ public class AuthorizationRegistry {
     public Authority addAuthority(@RequestParam String arbiterId,
                                 @RequestParam String validationId,
                                 @RequestParam String authorityType,
+                                @RequestParam String custodianId,
+                                String documentId,
                                 String description,
                                 PublicPerson subject) {
         Authority authority = Authority.builder()
                 .arbiterId(arbiterId)
                 .validationId(validationId)
                 .authorityType(authorityType)
+                .custodianId(custodianId)
+                .documentId(documentId)
                 .description(description)
                 .subject(subject)
                 .build();
