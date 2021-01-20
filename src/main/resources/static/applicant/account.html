@@ -83,36 +83,14 @@
      var url_string = window.location.href;
      var url = new URL(url_string);
      applicantId = url.searchParams.get("applicantUuId");
-     renderAllContracts("applicantUuId",applicantId);
+     renderAllContracts("applicant","applicantUuId",applicantId);
      $.getJSON("/applicant/find?uuid=" + applicantId, function(value){
         if (!value) {
             alert("Applicant not found");
         } else {
             $("#firstName").append(value.name.firstName);
-            //getAuthorityItems();
         }
      });
-     /*
-     if (!applicantId) {
-         history.go(-1);
-     } else {
-         $.ajax({
-            type : "GET",
-            url : "/applicant/find?uuid=" + applicantId,
-            success : function(value) {
-                if (!value) {
-                    alert("Applicant not found");
-                } else {
-                    $("#firstName").append(value.name.firstName);
-                    //getAuthorityItems();
-                }
-            },
-            error : function(xhr, ajaxOptions, thrownError) {
-                alert(xhr.status + ": " + xhr.responseText);
-            }
-         });
-     }
-     */
    });
 
 </script>

@@ -12,14 +12,27 @@ import lombok.*;
 public class Contract extends Entity {
 
     @Builder.Default private final String type = "contract";
+    // status strings
+    static public final String ACCOUNT_REQUEST = "account request";
+    static public final String GET_ACCOUNT_INFO = "get account info";
+    static public final String WAITING_REVIEW = "waiting review";
+    static public final String PASSED_REVIEW = "passed review";
+    static public final String FAILED_REVIEW = "failed review";
+    static public final String TOKEN_GENERATED = "token generated";
+    static public final String ACCESS_DENIED = "access denied";
+    // owner strings
+    public static final String APPLICANT = "applicant";
+    public static final String CUSTODIAN = "custodian";
+    public static final String ARBITER = "arbiter";
 
-    static public String ACCOUNT_REQUEST = "account request";
-    public static final String GET_ACCOUNT_INFO = "get account info";
-    static public String WAITING_REVIEW = "waiting review";
-    static public String PASSED_REVIEW = "passed review";
-    static public String FAILED_REVIEW = "failed review";
-    static public String TOKEN_GENERATED = "token generated";
-    static public String ACCESS_DENIED = "access denied";
+    @NotNull
+    private String contractId;
+
+    @NotNull
+    private String currentStatus;
+
+    @NotNull
+    private String owner;
 
     private String applicantId;
 
@@ -30,9 +43,6 @@ public class Contract extends Entity {
     private String authorityId;
 
     private String tokenId;
-
-    @NotNull
-    private String currentStatus;
 
     private int lastVerification;
 

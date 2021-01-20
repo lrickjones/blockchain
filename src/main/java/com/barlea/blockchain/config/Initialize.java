@@ -9,6 +9,8 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 /**
  * Initialize entities used for demonstrating workflow
  * @author L Rick Jones
@@ -67,6 +69,7 @@ public class Initialize implements ApplicationListener<ApplicationStartedEvent> 
                 "homePhone","555-667-8309");
 
         /* Contract contract = */ Rest.post("http://localhost:8080/contract/create",Authority.class,
+                "contractId", UUID.randomUUID().toString(),
                 "authorityId", authority.getUuid());
 
 

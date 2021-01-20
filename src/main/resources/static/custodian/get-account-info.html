@@ -5,7 +5,7 @@
 <head>
     <meta charset = "ISO-8859-1" />
     <link href = "../css/styles.css" rel = "stylesheet"/>
-    <title>Applicant Account Request</title>
+    <title>Custodian Get Account Info</title>
 </head>
 <body>
 <nav id="navbar" class="navbar navbar-expand-lg navbar-light">
@@ -26,13 +26,13 @@
                 <a class="nav-link" href="/contract/contracts.html">Contracts</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/index.html"><b>Applicant</b></a>
+                <a class="nav-link" href="/index.html">Applicant</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/arbiter/login.html">Arbiter</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/custodian/login.html">Custodian</a>
+                <a class="nav-link" href="/custodian/login.html"><b>Custodian</b></a>
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
@@ -43,7 +43,7 @@
 </nav>
 <br>
 <div class="container">
-    <div class="container-fluid row justify-content-center h2 w-100 text-darkblue">Request Account Information</div>
+    <div class="container-fluid row justify-content-center h2 w-100 text-darkblue">Get Account Information</div>
     <div class="container-fluid row w-100" style="height:100vh">
         <div class="container-fluid col border border-secondary rounded overflow-auto h-75 bg-teal p-4">
             <div id="authorityType"></div>
@@ -171,12 +171,8 @@
          $.ajax({
             type : "POST",
             url : "/contract/account-request?&contractId=" + contractId +"&userName="+userName+"&password="+password+"&applicantUuId="+applicantUuId+"&authName="+authName+"&authPassword="+authPassword,
-            success : function(contract) {
-                if (contract) {
-                    window.location.replace("/applicant/account.html?applicantUuId="+applicantUuId);
-                } else {
-                    alert("Failed to update contract");
-                }
+            success : function(data) {
+                alert("Request for account data sent");
             },
             error : function(xhr) {
                 alert(xhr.status);

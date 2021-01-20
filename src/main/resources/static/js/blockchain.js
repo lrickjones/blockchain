@@ -3,33 +3,21 @@
     });
 
 
-    function renderAllContracts(paramName,paramValue) {
+    function renderAllContracts(owner, paramName, paramValue) {
       $.getJSON("/register/active", function(result){
           $.each(result, function(key,value) {
-             addContract(value.contractIndex,value.contractId,paramName,paramValue);
+             addContract(value.contractIndex,value.contractId,owner,paramName,paramValue);
           });
        });
     }
 
-    function renderContractsForApplicant(applicantId,paramName,paramValue) {
-      $.getJSON("/register/active", function(result){
-          $.each(result, function(key,value) {
-             addContractForApplicant(value.contractIndex,value.contractId,applicantId,paramName,paramValue);
-          });
-       });
-    }
-
-   function addContract(index, id, paramName,paramValue) {
-      $.getJSON("/request/instance?index=" + index + "&id=" + id, function(result){
-            renderContract(result, paramName,paramValue);
+   function addContract(index, id, owner, paramName, paramValue) {
+      $.getJSON("/request/instance?index=" + index + "&id=" + id, function(contract){
+            if (contract.owner.localeCompare(owner) == 0) {
+                renderContract(contract, paramName, paramValue);
+            }
        });
    }
-
-  function addContractForApplicant(index, id, applicantId, paramName,paramValue) {
-     $.getJSON("/request/instance?index=" + index + "&id=" + id, function(result){
-           if (result.applicantId.localeCompare(applicantId) == 0) renderContract(result,paramName,paramValue);
-      });
-  }
 
    var applicant;
    function getApplicant(id) {
@@ -78,8 +66,11 @@
       var url = "";
       var instructions = "";
       if (contract.currentStatus.localeCompare("account request") == 0) {
-        url = "/applicant/account-request.html?contractUuId=" + contract.uuid + "&" + paramName + "=" + paramValue;
+        url = "/applicant/account-request.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
         instructions = "Request account details from service provider"
+      } else if (contract.currentStatus.localeCompare("get account info") == 0) {
+        url = "/custodian/get-account-info.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
+        instructions = "Find account info for requested user and return confirmation if identifiable"
       }
       var div = "<div class='container-fluid w-100 p-1 rounded bg-darkblue' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
       div += "<a class='container-fluid w-100 btn fadeIn second bg-teal' href='" + url + "' role='button'>";
@@ -98,7 +89,7 @@
 
       div += "<div>";
       getAuthority(contract.authorityId);
-      div += "<div class='row border border-dark rounded p-2'> "
+      div += "<div class='border border-dark rounded p-2'> "
       if (authority) {
         custodian = "";
         if (authority.custodianId) {
@@ -121,7 +112,7 @@
 
       div += "<div>";
       getArbiter(contract.arbiterId);
-      if (applicant) {
+      if (arbiter) {
         div += "<b>Judge: </b> " + arbiter.personalInfo.lastName + ", " + arbiter.personalInfo.firstName;
       }
       div += "</div>";
