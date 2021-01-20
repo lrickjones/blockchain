@@ -5,11 +5,11 @@
 <head>
     <meta charset = "ISO-8859-1" />
     <link href = "../css/styles.css" rel = "stylesheet"/>
-    <title>Spring Boot Application</title>
+    <title>Active Contracts</title>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#"><img src="../img/logo.png" style="width:100px;height:100px;" alt="BARLEA Logo" class="border border-warning rounded"></a>
+<nav id="navbar" class="navbar navbar-expand-lg navbar-light">
+    <a class="navbar-brand" href="/"><img src="../img/barlea.png" style="width:80px;height:100px;" alt="BARLEA Logo"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -17,25 +17,22 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="http://localhost:8080">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/contract/validations.html">Validations</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/contract/contracts.html"><b>Contracts</b></a>
+                <a class="nav-link" href="/contract/contracts.html">Contracts</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Applicant</a>
+                <a class="nav-link" href="/">Applicant</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Arbiter</a>
+                <a class="nav-link" href="/arbiter/login.html">Arbiter</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Custodian</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="http://localhost:8080">Log Out</a>
+                <a class="nav-link" href="/custodian/login.html"><b>Custodian</b></a>
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
@@ -44,110 +41,32 @@
         </form>
     </div>
 </nav>
+
+<div class="h2 container text-darkblue">Active Contracts </div>
 <br>
 <div class="container">
-    <div id="contracts"></div>
+
+    <div class="wrapper fadeInDown">
+        <div class="container-fluid">
+            <div id="contracts"></div>
+        </div>
+    </div>
+
 </div>
 </body>
-
 <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
+<script src="/js/blockchain.js"></script>
+
 <script>
-    $.ajaxSetup({
-        async: false
-    });
 
-    $(document).ready(function() {
-      $.getJSON("/register/active", function(result){
-          $.each(result, function(key,value) {
-             addContract(value.contractIndex,value.contractId);
-          });
-       });
-    });
-
-   function addContract(index, id) {
-      $.getJSON("/request/instance?index=" + index + "&id=" + id, function(result){
-            renderContract(result);
-       });
-   }
-
-   var applicant;
-   function getApplicant(id) {
-      if (!id) applicant =  null;
-      $.getJSON("/applicant/find?uuid=" + id, function(result){
-            applicant = result;
-       });
-   }
-
-   var authority;
-   function getAuthority(id) {
-      if (!id) authority =  null;
-      $.getJSON("/authority/find?uuid=" + id, function(result){
-            authority = result;
-       });
-   }
-
-   var arbiter;
-   function getArbiter(id) {
-      if (!id) arbiter =  null;
-      $.getJSON("/arbiter/find?uuid=" + id, function(result){
-            arbiter = result;
-       });
-   }
-
-  var custodian;
-   function getCustodian(id) {
-      if (!id) custodian =  null;
-      $.getJSON("/custodian/find?uuid=" + id, function(result){
-            custodian = result;
-       });
-   }
-
-   function renderContract(contract) {
-      var div = "<div class='container border border-dark bg-secondary rounded text-light p-4' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
-      div += "<div class='container row'>"
-      div += "<div class='col-flex bg-light text-dark mr-4 p-2 h4 rounded-left float-left text-center'>" + contract.currentStatus + "</div>";
-      div += "<div class='col-flex'>";
-      if (contract.explanation) {
-        div += "<div>" + contract.explanation + "</div>";
-      }
-
-      div += "<div>";
-      getApplicant(contract.applicantId);
-      if (applicant) {
-        div += "<b>Officer: </b> " + applicant.name.lastName + ", " + applicant.name.firstName;
-      }
-      div += "</div>";
-
-      div += "<div>";
-      getAuthority(contract.authorityId);
-      if (authority) {
-        div += "<b>" + authority.authorityType + ": </b>" + authority.description;
-      }
-      div += "</div>";
-
-      div += "<div>";
-      getArbiter(contract.arbiterId);
-      if (applicant) {
-        div += "<b>Judge: </b> " + arbiter.personalInfo.lastName + ", " + arbiter.personalInfo.firstName;
-      }
-      div += "</div>";
-
-      div += "<div>";
-      getCustodian(contract.custodianId);
-      if (custodian) {
-        div += "<b>Custodian: </b> " + custodian;
-      }
-      div += "</div>";
-
-      div += "<div>" + contract.tokenId + "</div>";
-      div += "</div></div></div>";
-      $("#contracts").append(div);
-   }
+   $(document).ready(function() {
+     renderAllContracts("","");
+   });
 
 </script>
 </html>

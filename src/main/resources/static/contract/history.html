@@ -5,7 +5,7 @@
 <head>
     <meta charset = "ISO-8859-1" />
     <link href = "../css/styles.css" rel = "stylesheet"/>
-    <title>Applicant Account Page</title>
+    <title>Contract History</title>
 </head>
 <body>
 <nav id="navbar" class="navbar navbar-expand-lg navbar-light">
@@ -26,28 +26,14 @@
                 <a class="nav-link" href="/contract/contracts.html">Contracts</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/"><b>Applicant</b></a>
+                <a class="nav-link" href="/">Applicant</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/arbiter/login.html">Arbiter</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/custodian/login.html">Custodian</a>
+                <a class="nav-link" href="/custodian/login.html"><b>Custodian</b></a>
             </li>
-            <!--li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Dropdown
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-            </li-->
-            <!--li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
-            </li-->
         </ul>
         <form class="form-inline my-2 my-lg-0">
             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -56,10 +42,9 @@
     </div>
 </nav>
 
-<div class="h2 container text-darkblue">Welcome <span id="firstName"></span>, </div>
+<div class="h2 container text-darkblue">Active Contracts </div>
 <br>
 <div class="container">
-    <div class="h3 container text-teal">Here are your pending work items:</div>
 
     <div class="wrapper fadeInDown">
         <div class="container-fluid">
@@ -82,15 +67,8 @@
    $(document).ready(function() {
      var url_string = window.location.href;
      var url = new URL(url_string);
-     applicantId = url.searchParams.get("applicantUuId");
-     renderContractsByOwner("applicant","applicantUuId",applicantId);
-     $.getJSON("/applicant/find?uuid=" + applicantId, function(value){
-        if (!value) {
-            alert("Applicant not found");
-        } else {
-            $("#firstName").append(value.name.firstName);
-        }
-     });
+     var contractId = url.searchParams.get("contractId");
+     renderContractHistory(contractId);
    });
 
 </script>

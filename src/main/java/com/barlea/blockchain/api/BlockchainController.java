@@ -182,6 +182,22 @@ public class BlockchainController {
 		return result;
 	}
 
+	@GetMapping("/request/history")
+	public List<Contract> getContractHistory(@RequestParam String contractId) {
+		List<Contract> contracts = new ArrayList<>();
+		List<Block> blocks = requests.getChain();
+		for (Block b: blocks) {
+			Optional<Transaction> transaction = b.getTransactions().stream().filter(t->((Contract)t.getEntity()).getContractId().equals(contractId)).findFirst();
+			if (transaction.isPresent()) {
+				Entity entity = transaction.get().getEntity();
+				if (entity instanceof Contract) {
+					contracts.add((Contract)entity);
+				}
+			}
+		}
+		return contracts;
+	}
+
 	@PostMapping("/request/transaction")
 	public TransactionResponse requestNewTransaction(@RequestBody @Valid Applicant applicant) {
 
