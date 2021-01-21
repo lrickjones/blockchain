@@ -84,7 +84,7 @@
             <div class="wrapper fadeInDown">
                 <div id="formContent">
                     <!-- Tabs Titles -->
-                    <div class="h3 container fadeIn first text-barlea">Credentials</div>
+                    <div class="h3 container fadeIn first text-barlea">Lookup Status</div>
                     <!-- Login Form -->
                     <div id="error" class="text-danger"></div>
                     <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
@@ -191,7 +191,11 @@
             type : "POST",
             url : "/contract/get-account-info?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password+"&status="+status+"&token="+token,
             success : function(data) {
-                alert("Contract updated");
+                if (!data) {
+                    alert("Submission Failed");
+                } else {
+                    alert("Contract updated");
+                }
             },
             error : function(xhr) {
                 alert(xhr.statusText);

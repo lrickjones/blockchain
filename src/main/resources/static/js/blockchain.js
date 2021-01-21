@@ -7,6 +7,8 @@
           $.each(result, function(key,value) {
              addContract(value.contractIndex,value.contractId,paramName,paramValue);
           });
+            var isEmpty = document.getElementById('contracts').innerHTML === "";
+            if (isEmpty) $("#contracts").append("<span class='h4 text-teal'>No Active Contracts</span>");
        });
     }
 
@@ -18,12 +20,11 @@
 
     function renderContractsByOwner(owner, paramName, paramValue) {
       $.getJSON("/register/active", function(result){
-          var none = true;
           $.each(result, function(key,value) {
              addContractByOwner(value.contractIndex,value.contractId,owner,paramName,paramValue);
-             none = false;
           });
-          if (none) $("#contracts").append("<span class='h4 text-teal'>No Pending Work Items</span>");
+          var isEmpty = document.getElementById('contracts').innerHTML === "";
+          if (isEmpty) $("#contracts").append("<span class='h4 text-teal'>No Pending Work Items</span>");
        });
     }
 
