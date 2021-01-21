@@ -85,7 +85,16 @@
    }
 
    function renderValidation(contract) {
-        var div = "<div>Validation</div>";
+        var div = "<div class='row ml-4'>";
+         $.getJSON("/verification/entities?index=" + contract.lastVerification, function(result){
+             $.each(result, function(key, entity) {
+                div += "<div class='col-flex h6 p-2 m-2 text-darkblue bg-lightblue text-left rounded-top'>";
+                div += "<input type='checkbox' class='h5 mr-2 form-control' onclick='return false' checked>";
+                div += entity;
+                div += "</div>";
+             });
+          });
+        div += "</div>";
         $("#"+contract.uuid).append(div);
    }
 

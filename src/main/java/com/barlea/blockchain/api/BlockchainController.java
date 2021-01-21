@@ -136,6 +136,27 @@ public class BlockchainController {
 		return ChainResponse.builder().chain(verifications.getChain()).length(verifications.getChain().size()).build();
 	}
 
+	@GetMapping("/verification/entities")
+	public List<String> getVerifiedEntitiesByIndex(@RequestParam int index) {
+		List<String> result = new ArrayList<>();
+		Block block = verifications.blockAt(index);
+		if (block != null) {
+			for (Transaction t: block.getTransactions()) {
+				Entity e = t.getEntity();
+				if (e instanceof Applicant) {
+					result.add("Applicant: " + ((Applicant)e).getName().getLastName() + ", " + ((Applicant)e).getName().getFirstName());
+				} else if (e instanceof Authority) {
+					result.add("Authority: " + ((Authority)e).getAuthorityType() + ": " + ((Authority)e).getDocumentId());
+				} else if (e instanceof Custodian) {
+					result.add("Custodian: " + ((Custodian)e).getName());
+				} else if (e instanceof Arbiter) {
+					result.add("Arbiter: " + ((Arbiter)e).getJurisdiction());
+				}
+			}
+		}
+		return result;
+	}
+
 	@PostMapping("/verification/transaction")
 	public TransactionResponse verificationNewTransaction(@RequestBody @Valid Applicant applicant) {
 

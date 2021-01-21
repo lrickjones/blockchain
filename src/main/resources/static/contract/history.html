@@ -23,7 +23,7 @@
                 <a class="nav-link" href="/contract/validations.html">Validations</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/contract/contracts.html">Contracts</a>
+                <a class="nav-link" href="/contract/contracts.html"><b>Contracts</b></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/">Applicant</a>
@@ -32,7 +32,7 @@
                 <a class="nav-link" href="/arbiter/login.html">Arbiter</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/custodian/login.html"><b>Custodian</b></a>
+                <a class="nav-link" href="/custodian/login.html">Custodian</a>
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
@@ -42,7 +42,7 @@
     </div>
 </nav>
 
-<div class="h2 container text-darkblue">Active Contracts </div>
+<div class="h2 container text-darkblue">Contract History for <span id="contract-number"></span> </div>
 <br>
 <div class="container">
 
@@ -68,6 +68,7 @@
      var url_string = window.location.href;
      var url = new URL(url_string);
      var contractId = url.searchParams.get("contractId");
+     $("#contract-number").append(contractId);
      renderContractHistory(contractId);
    });
 
