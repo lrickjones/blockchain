@@ -4,12 +4,12 @@
 
 <head>
     <meta charset = "ISO-8859-1" />
-    <link href = "/css/styles.css" rel = "stylesheet"/>
-    <title>Active Contracts</title>
+    <link href = "../css/styles.css" rel = "stylesheet"/>
+    <title>Custodian Account Page</title>
 </head>
 <body>
 <nav id="navbar" class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" href="/"><img src="/img/barlea.png" style="width:80px;height:100px;" alt="BARLEA Logo"></a>
+    <a class="navbar-brand" href="/"><img src="../img/barlea.png" style="width:80px;height:100px;" alt="BARLEA Logo"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -36,33 +36,25 @@
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
-            <a class="nav-link" href="/contract/monkey.html"><img src="/img/monkey.png" style="width:60px;height:60px;" alt="monkey"></a>
             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
     </div>
 </nav>
 
-<div class="h2 container text-darkblue">Active Contracts </div>
+<div class="h2 container text-darkblue">Welcome <span id="firstName"></span>, </div>
 <br>
 <div class="container">
+    <div class="h3 container text-teal">Here are your pending work items:</div>
 
     <div class="wrapper fadeInDown">
-        <div class="container-fluid overflow-auto" style="height:75vh;">
+        <div class="container-fluid">
             <div id="contracts"></div>
-        </div>
-        <div class="container-fluid row">
-            <div class="col" id="register"></div>
-            <div class="col" id="request"></div>
-            <div class="col" id="verification"></div>
         </div>
     </div>
 
 </div>
 </body>
-<footer>
-    <div>Monkey icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-</footer>
 <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -74,28 +66,17 @@
 <script>
 
    $(document).ready(function() {
-     renderAllContracts("","");
-       $.getJSON("/register/validate", function(result){
-            if (result) {
-                $("#register").append("<input type='checkbox' checked on-click='return false'> Register Chain Valid");
-            } else {
-                $("#register").append("<span class='text-danger'>Register Chain Invalid!</span>");
-            }
-       });
-       $.getJSON("/request/validate", function(result){
-            if (result) {
-                $("#request").append("<input type='checkbox' checked on-click='return false'> Request Chain Valid");
-            } else {
-                $("#request").append("<span class='text-danger'>Request Chain Invalid!</span>");
-            }
-       });
-       $.getJSON("/verification/validate", function(result){
-            if (result) {
-                $("#verification").append("<input type='checkbox' checked on-click='return false'> Verification Chain Valid");
-            } else {
-                $("#verification").append("<span class='text-danger'>Verification Chain Invalid!</span>");
-            }
-       });
+     var url_string = window.location.href;
+     var url = new URL(url_string);
+     custodianId = url.searchParams.get("custodianUuId");
+     renderContractsByOwner("custodian","custodianUuId",custodianId);
+     $.getJSON("/custodian/find?uuid=" + custodianId, function(value){
+        if (!value) {
+            alert("Custodian not found");
+        } else {
+            $("#firstName").append(value.name);
+        }
+     });
    });
 
 </script>

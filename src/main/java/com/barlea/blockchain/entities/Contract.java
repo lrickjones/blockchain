@@ -15,6 +15,9 @@ public class Contract extends Entity {
     // status strings
     static public final String ACCOUNT_REQUEST = "account request";
     static public final String GET_ACCOUNT_INFO = "get account info";
+    static public final String ACCOUNT_FOUND = "account found";
+    static public final String MULTIPLE_ACCOUNTS = "multiple accounts";
+    static public final String ACCOUNT_NOT_FOUND = "account not found";
     static public final String WAITING_REVIEW = "waiting review";
     static public final String PASSED_REVIEW = "passed review";
     static public final String FAILED_REVIEW = "failed review";

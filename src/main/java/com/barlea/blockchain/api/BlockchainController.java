@@ -83,6 +83,11 @@ public class BlockchainController {
 		return result;
 	}
 
+	@GetMapping("/register/validate")
+	public boolean validateRegister() throws JsonProcessingException {
+		return register.validChain();
+	}
+
 	@PostMapping("/register/transaction")
 	public TransactionResponse registerNewTransaction(@RequestBody @Valid Applicant applicant) {
 
@@ -164,6 +169,11 @@ public class BlockchainController {
 		return TransactionResponse.builder().index(index).build();
 	}
 
+	@GetMapping("/verification/validate")
+	public boolean validateVerifications() throws JsonProcessingException {
+		return verifications.validChain();
+	}
+
 	@GetMapping("/request/record")
 	public RecordResponse requestRecord() throws JsonProcessingException {
 
@@ -226,6 +236,11 @@ public class BlockchainController {
 		return TransactionResponse.builder().index(index).build();
 	}
 
+	@GetMapping("/request/validate")
+	public boolean validateRequest() throws JsonProcessingException {
+		return requests.validChain();
+	}
+
 	@PostMapping("/contract/create")
 	public Contract createNewContract(@RequestParam String authorityId, @RequestParam String contractId) throws JsonProcessingException {
 		Contract contract = Contract.builder().contractId(contractId).currentStatus(Contract.ACCOUNT_REQUEST).owner(Contract.APPLICANT).authorityId(authorityId).build();
@@ -258,15 +273,49 @@ public class BlockchainController {
 		verifications.addTransaction(applicant.getUuid(), authority.getUuid(), authority);
 		// update contract from copy (modifying contract will change the block and invalidate the chain)
 		Contract newContract = contract.toBuilder()
-			.applicantId(applicantUuId)
-			.currentStatus(Contract.GET_ACCOUNT_INFO)
-			.owner(Contract.CUSTODIAN)
-			.lastVerification(verificationRecord().getIndex())
-			.build();
+				.applicantId(applicantUuId)
+				.currentStatus(Contract.GET_ACCOUNT_INFO)
+				.owner(Contract.CUSTODIAN)
+				.lastVerification(verificationRecord().getIndex())
+				.build();
 		// add contract transaction to requests
 		requests.addTransaction(applicant.getUuid(), authority.getUuid(),newContract);
 		// update the registry that there is a new or updated contract
 		updateRegister(applicant.getUuid(),authority.getUuid(),contract.getContractId(),requestRecord().getIndex());
+		return contract;
+	}
+
+	@PostMapping("/contract/get-account-info")
+	public Contract addAccessToken(String contractId, String custodianUuId, String userName, String password, String status, String token) throws JsonProcessingException {
+		// find contract, if active
+		Contract contract = findContract(contractId);
+		if (contract == null) return null;
+		// Find custodian
+		Custodian custodian = Rest.get("http://localhost:8080/custodian/find",Custodian.class,"uuid",custodianUuId);
+		if (custodian == null) return null;
+		// Validate custodian
+		String custodianId = Hasher.hash(Credentials.builder().userName(userName).password(password).build().toString());
+		if (!custodianId.equals(custodian.getValidationId())) return null;
+		// record both transactions in the verification record
+		verifications.addTransaction(custodianUuId, contract.getApplicantId(), custodian);
+		// update contract from copy (modifying contract will change the block and invalidate the chain)
+		String lookupStatus = Contract.ACCOUNT_NOT_FOUND;
+		if (status.equals("account found")) {
+			lookupStatus = Contract.ACCOUNT_FOUND;
+		} else if (status.equals("multiple matches")) {
+			lookupStatus = Contract.MULTIPLE_ACCOUNTS;
+		}
+		Contract newContract = contract.toBuilder()
+				.custodianId(custodian.getUuid())
+				.currentStatus(lookupStatus)
+				.owner(Contract.ARBITER)
+				.tokenId(token)
+				.lastVerification(verificationRecord().getIndex())
+				.build();
+		// add contract transaction to requests
+		requests.addTransaction(custodian.getUuid(), contract.getApplicantId(),newContract);
+		// update the registry that there is a new or updated contract
+		updateRegister(custodian.getUuid(), contract.getApplicantId(),contract.getContractId(),requestRecord().getIndex());
 		return contract;
 	}
 

@@ -18,9 +18,12 @@
 
     function renderContractsByOwner(owner, paramName, paramValue) {
       $.getJSON("/register/active", function(result){
+          var none = true;
           $.each(result, function(key,value) {
              addContractByOwner(value.contractIndex,value.contractId,owner,paramName,paramValue);
+             none = false;
           });
+          if (none) $("#contracts").append("<span class='h4 text-teal'>No Pending Work Items</span>");
        });
     }
 
@@ -162,7 +165,7 @@
       custodian = "";
       getCustodian(contract.custodianId);
       if (custodian) {
-        div += "<b>Custodian: </b> " + custodian;
+        div += "<b>Custodian: </b> " + custodian.name;
       }
       div += "</div>";
 

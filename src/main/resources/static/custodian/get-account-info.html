@@ -43,18 +43,18 @@
 </nav>
 <br>
 <div class="container">
-    <div class="container-fluid row justify-content-center h2 w-100 text-darkblue">Get Account Information</div>
+    <div class="container-fluid row justify-content-center h2 w-100 text-darkblue">Lookup Account Information</div>
     <div class="container-fluid row w-100" style="height:100vh">
         <div class="container-fluid col border border-secondary rounded overflow-auto h-75 bg-teal p-4">
             <div id="authorityType"></div>
             <div id="description"></div>
-            <label class="h4 text-barlea">Subject's Name</label>
+            <label class="h5 text-barlea">Subject's Name</label>
             <div class="row justify-content-center">
                 <input type="text" id="name.firstName" class="container col border border-secondary rounded" name="name.firstName" placeholder="First Name">
                 <input type="text" id="name.middleName" class="container col border border-secondary rounded" name="name.middleName" placeholder="Middle Name">
                 <input type="text" id="name.lastName" class="container col border border-secondary rounded" name="name.lastName" placeholder="Last Name">
             </div >
-            <label class="h4 text-barlea">Subject's Address</label>
+            <label class="h5 text-barlea">Subject's Address</label>
             <input type="text" id="homeDomicile.address1" class="container col border border-secondary rounded" name="homeDomicile.address1" placeholder="Address 1">
             <input type="text" id="homeDomicile.address2" class="container col border border-secondary rounded" placeholder="Address 2">
             <div class="container row">
@@ -62,16 +62,16 @@
                 <input type="text" id="homeDomicile.city" class="container col border border-secondary rounded" name="homeDomicile.city" placeholder="City">
                 <input type="text" id="homeDomicile.zip" class="container col border border-secondary rounded" name="homeDomicile.zip" placeholder="ZIP Code">
             </div>
-            <label class="h4 text-barlea">Subject's Phone Numbers</label>
+            <label class="h5 text-barlea">Subject's Phone Numbers</label>
             <input type="text" id="homePhone" class="container col border border-secondary rounded" name="homePhone" placeholder="Home Phone">
             <input type="text" id="workPhone" class="container col border border-secondary rounded" name="workPhone" placeholder="Work Phone">
-            <label class="h4 text-barlea">Subject's Date of Birth</label>
+            <label class="h5 text-barlea">Subject's Date of Birth</label>
             <div class="container row">
                 <input type="text" id="month" class="container col border border-secondary rounded" name="month" placeholder="Birth Month">
                 <input type="text" id="day" class="container col border border-secondary rounded" name="day" placeholder="Birth Day">
                 <input type="text" id="year" class="container col border border-secondary rounded" name="year" placeholder="Birth Year">
             </div >
-            <label class="h4 text-barlea">Subject's Place of Birth</label>
+            <label class="h5 text-barlea">Subject's Place of Birth</label>
             <input type="text" id="placeOfBirth.address1" class="container col border border-secondary rounded" name="placeOfBirth..address1" placeholder="Address 1">
             <input type="text" id="placeOfBirth.address2" class="container col border border-secondary rounded" name="placeOfBirth..address2" placeholder="Address 2">
             <div class="container row">
@@ -89,8 +89,21 @@
                     <div id="error" class="text-danger"></div>
                     <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
                     <input type="password" id="password" class="fadeIn second hidden" name="password" placeholder="password">
-                    <input type="text" id="authName" class="fadeIn third" name="authName" placeholder="authority name">
-                    <input type="password" id="authPassword" class="fadeIn third hidden" name="authPassword" placeholder="authorization code">
+                    <div class="input-group justify-content-center">
+                        <div class="input-group-prepend my-2">
+                            <button type="button" class="btn bg-darkblue text-lightblue">Select</button>
+                            <button type="button" class="btn dropdown-toggle bg-darkblue text-lightblue dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" onclick="updateStatus('account found')">Account Found</a>
+                                <a class="dropdown-item" onclick="updateStatus('multiple matches')">Multiple Matches</a>
+                                <a class="dropdown-item" onclick="updateStatus('no matches')">No Matches</a>
+                            </div>
+                        </div>
+                        <input type="text" id="status" class="fadeIn third hidden" style="width:62%;" name="status" placeholder="search result">
+                    </div>
+                    <input type="text" id="token" class="fadeIn third hidden" name="token" placeholder="account token">
                     <input  type="button" class="fadeIn fourth" onclick="validate()" value="Submit Request">
                 </div>
             </div>
@@ -110,6 +123,7 @@
      var url_string = window.location.href;
      var url = new URL(url_string);
      var contractId = url.searchParams.get("contractId");
+     var custodianUuId = url.searchParams.get("custodianUuId");
      if (contractId) {
           $.getJSON("/contract/find?contractId=" + contractId, function(contract){
                var uuid = contract.authorityId;
@@ -159,23 +173,28 @@
      }
    });
 
+   function updateStatus(newStatus) {
+     var status = document.getElementById("status");
+     status.value = newStatus;
+   }
+
    function validate() {
      var url_string = window.location.href;
      var url = new URL(url_string);
      var contractId = url.searchParams.get("contractId");
-     var applicantUuId = url.searchParams.get("applicantUuId");
+     var custodianUuId = url.searchParams.get("custodianUuId");
      var userName = document.getElementById("userName").value;
      var password = document.getElementById("password").value;
-     var authName = document.getElementById("authName").value;
-     var authPassword = document.getElementById("authPassword").value;
+     var status = document.getElementById("status").value;
+     var token = document.getElementById("token").value;
          $.ajax({
             type : "POST",
-            url : "/contract/account-request?&contractId=" + contractId +"&userName="+userName+"&password="+password+"&applicantUuId="+applicantUuId+"&authName="+authName+"&authPassword="+authPassword,
+            url : "/contract/get-account-info?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password+"&status="+status+"&token="+token,
             success : function(data) {
-                alert("Request for account data sent");
+                alert("Contract updated");
             },
             error : function(xhr) {
-                alert(xhr.status);
+                alert(xhr.statusText);
             }
          });
      }

@@ -49,6 +49,11 @@
     <div class="wrapper fadeInDown">
         <div class="container-fluid">
             <div id="contracts"></div>
+            <div class="row">
+                <div class="col" id="register"></div>
+                <div class="col" id="request"></div>
+                <div class="col" id="verification"></div>
+            </div>
         </div>
     </div>
 
@@ -70,6 +75,27 @@
      var contractId = url.searchParams.get("contractId");
      $("#contract-number").append(contractId);
      renderContractHistory(contractId);
+        $.getJSON("/register/validate", function(result){
+            if (result) {
+                $("#register").append("<input type='checkbox' checked on-click='return false'> Register Chain Valid");
+            } else {
+                $("#register").append("<span class='text-danger'>Register Chain Invalid!</span>");
+            }
+       });
+       $.getJSON("/request/validate", function(result){
+            if (result) {
+                $("#request").append("<input type='checkbox' checked on-click='return false'> Request Chain Valid");
+            } else {
+                $("#request").append("<span class='text-danger'>Request Chain Invalid!</span>");
+            }
+       });
+       $.getJSON("/verification/validate", function(result){
+            if (result) {
+                $("#verification").append("<input type='checkbox' checked on-click='return false'> Verification Chain Valid");
+            } else {
+                $("#verification").append("<span class='text-danger'>Verification Chain Invalid!</span>");
+            }
+       });
    });
 
 </script>

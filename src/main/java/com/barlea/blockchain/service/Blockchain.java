@@ -117,7 +117,7 @@ public class Blockchain {
 			log.debug("lastBlock={}", lastBlock);
 			log.debug("currentBlock={}", currentBlock);
 
-			if (!currentBlock.getPreviousHash().equals(lastBlock.hash(mapper))) {
+			if (mapper != null && !currentBlock.getPreviousHash().equals(lastBlock.hash(mapper))) {
 				return false;
 			}
 

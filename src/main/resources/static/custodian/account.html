@@ -49,7 +49,7 @@
 
     <div class="wrapper fadeInDown">
         <div class="container-fluid">
-            <div id="contracts"></div>
+            <div id="contracts"><span class="h4 text-teal">No Pending Work Items</span></div>
         </div>
     </div>
 
@@ -68,9 +68,9 @@
    $(document).ready(function() {
      var url_string = window.location.href;
      var url = new URL(url_string);
-     custodianId = url.searchParams.get("custodianUuId");
-     renderContractsByOwner("custodian","custodianUuId",custodianId);
-     $.getJSON("/custodian/find?uuid=" + custodianId, function(value){
+     custodianUuId = url.searchParams.get("custodianUuId");
+     renderContractsByOwner("custodian","custodianUuId",custodianUuId);
+     $.getJSON("/custodian/find?uuid=" + custodianUuId, function(value){
         if (!value) {
             alert("Custodian not found");
         } else {
