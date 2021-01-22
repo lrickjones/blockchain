@@ -20,9 +20,6 @@
                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/contract/validations.html">Validations</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="/contract/contracts.html"><b>Contracts</b></a>
             </li>
             <li class="nav-item">
@@ -70,32 +67,11 @@
 <script>
 
    $(document).ready(function() {
-     var url_string = window.location.href;
-     var url = new URL(url_string);
-     var contractId = url.searchParams.get("contractId");
-     $("#contract-number").append(contractId);
-     renderContractHistory(contractId);
-        $.getJSON("/register/validate", function(result){
-            if (result) {
-                $("#register").append("<input type='checkbox' checked on-click='return false'> Register Chain Valid");
-            } else {
-                $("#register").append("<span class='text-danger'>Register Chain Invalid!</span>");
-            }
-       });
-       $.getJSON("/request/validate", function(result){
-            if (result) {
-                $("#request").append("<input type='checkbox' checked on-click='return false'> Request Chain Valid");
-            } else {
-                $("#request").append("<span class='text-danger'>Request Chain Invalid!</span>");
-            }
-       });
-       $.getJSON("/verification/validate", function(result){
-            if (result) {
-                $("#verification").append("<input type='checkbox' checked on-click='return false'> Verification Chain Valid");
-            } else {
-                $("#verification").append("<span class='text-danger'>Verification Chain Invalid!</span>");
-            }
-       });
+        var url_string = window.location.href;
+        var url = new URL(url_string);
+        var contractId = url.searchParams.get("contractId");
+        $("#contract-number").append(contractId);
+        renderContractHistory(contractId);
    });
 
 </script>

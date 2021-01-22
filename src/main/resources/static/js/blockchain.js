@@ -36,15 +36,6 @@
        });
    }
 
-   function renderContractHistory(contractId) {
-     $.getJSON("/request/history?contractId=" + contractId, function(result){
-         $.each(result, function(key, contract) {
-            renderContract(contract,"","");
-            renderValidation(contract);
-         });
-      });
-   }
-
    var applicant;
    function getApplicant(id) {
       if (!id) applicant =  null;
@@ -110,10 +101,13 @@
       } else {
           if (contract.currentStatus.localeCompare("account request") == 0) {
             url = "/applicant/account-request.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
-            instructions = "Request account details from service provider"
+            instructions = "Request account details from service provider";
           } else if (contract.currentStatus.localeCompare("get account info") == 0) {
             url = "/custodian/get-account-info.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
-            instructions = "Find account info for requested user and return confirmation if identifiable"
+            instructions = "Find account info for requested user and return confirmation if identifiable";
+          } else if (contract.currentStatus.localeCompare("account found") == 0) {
+              url = "/arbiter/approve-request.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
+              instructions = "Review application and approve or deny request";
           }
       }
       var div = "<div class='container-fluid w-100 p-1 rounded bg-darkblue mb-4' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
@@ -177,4 +171,34 @@
       div += "<div id='" + contract.uuid + "'></div>"
       div += "</div></a></div>";
       $("#contracts").append(div);
+   }
+
+   function renderContractHistory(contractId) {
+         $.getJSON("/request/history?contractId=" + contractId, function(result){
+             $.each(result, function(key, contract) {
+                renderContract(contract,"","");
+                renderValidation(contract);
+             });
+          });
+           $.getJSON("/register/validate", function(result){
+               if (result) {
+                   $("#register").append("<input type='checkbox' checked on-click='return false'> Register Chain Valid");
+               } else {
+                   $("#register").append("<span class='text-danger'>Register Chain Invalid!</span>");
+               }
+          });
+          $.getJSON("/request/validate", function(result){
+               if (result) {
+                   $("#request").append("<input type='checkbox' checked on-click='return false'> Request Chain Valid");
+               } else {
+                   $("#request").append("<span class='text-danger'>Request Chain Invalid!</span>");
+               }
+          });
+          $.getJSON("/verification/validate", function(result){
+               if (result) {
+                   $("#verification").append("<input type='checkbox' checked on-click='return false'> Verification Chain Valid");
+               } else {
+                   $("#verification").append("<span class='text-danger'>Verification Chain Invalid!</span>");
+               }
+          });
    }

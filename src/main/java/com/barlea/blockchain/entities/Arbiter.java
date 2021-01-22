@@ -23,4 +23,6 @@ public class Arbiter extends Entity {
 
     @NotEmpty
     private Name personalInfo;
+
+    private String validationId;
 }

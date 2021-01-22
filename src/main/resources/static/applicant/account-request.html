@@ -20,9 +20,6 @@
                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/contract/validations.html">Validations</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="/contract/contracts.html">Contracts</a>
             </li>
             <li class="nav-item">
@@ -175,7 +172,7 @@
                 if (contract) {
                     window.location.replace("/applicant/account.html?applicantUuId="+applicantUuId);
                 } else {
-                    alert("Failed to update contract");
+                    alert("Failed to update contract - Check User and Password");
                 }
             },
             error : function(xhr) {

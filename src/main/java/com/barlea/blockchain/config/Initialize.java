@@ -39,6 +39,7 @@ public class Initialize implements ApplicationListener<ApplicationStartedEvent> 
 
         Arbiter arbiter = Rest.post("http://localhost:8080/arbiter/add",Arbiter.class,
                 "jurisdiction", "West Side",
+                "validationId", generateValidationFromCredentials("thejudge","tjPass123"),
                 "firstName","Wyatt",
                 "middleName","P",
                 "lastName","Earp");

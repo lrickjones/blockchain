@@ -20,9 +20,6 @@
                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/contract/validations.html">Validations</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="/contract/contracts.html">Contracts</a>
             </li>
             <li class="nav-item">
@@ -192,9 +189,9 @@
             url : "/contract/get-account-info?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password+"&status="+status+"&token="+token,
             success : function(data) {
                 if (!data) {
-                    alert("Submission Failed");
+                    alert("Submission Failed - Check Username and Password");
                 } else {
-                    alert("Contract updated");
+                    window.location.replace("/custodian/account.html?custodianUuId="+custodianUuId);
                 }
             },
             error : function(xhr) {

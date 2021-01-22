@@ -20,9 +20,6 @@
                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/contract/validations.html">Validations</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="/contract/contracts.html">Contracts</a>
             </li>
             <li class="nav-item">
@@ -68,13 +65,13 @@
    $(document).ready(function() {
      var url_string = window.location.href;
      var url = new URL(url_string);
-     custodianId = url.searchParams.get("custodianUuId");
-     renderContractsByOwner("custodian","custodianUuId",custodianId);
-     $.getJSON("/custodian/find?uuid=" + custodianId, function(value){
+     arbiterUuId = url.searchParams.get("arbiterUuId");
+     renderContractsByOwner("arbiter","arbiterUuId",arbiterUuId);
+     $.getJSON("/arbiter/find?uuid=" + arbiterUuId, function(value){
         if (!value) {
             alert("Custodian not found");
         } else {
-            $("#firstName").append(value.name);
+            $("#firstName").append("Judge " + value.personalInfo.lastName);
         }
      });
    });

@@ -1,6 +1,7 @@
 package com.barlea.blockchain.api;
 
 import com.barlea.blockchain.entities.Arbiter;
+import com.barlea.blockchain.entities.Authority;
 import com.barlea.blockchain.entities.Name;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +22,11 @@ public class ArbiterRegistry {
     List<Arbiter> arbiterList = new ArrayList<>();
 
     @PostMapping("/arbiter/add")
-    public Arbiter addArbiter(@RequestParam String jurisdiction,
+    public Arbiter addArbiter(@RequestParam String jurisdiction, String validationId,
                             Name arbiterName) {
         Arbiter arbiter = Arbiter.builder()
                 .jurisdiction(jurisdiction)
+                .validationId(validationId)
                 .personalInfo(arbiterName)
                 .build();
         arbiterList.add(arbiter);
@@ -37,8 +39,13 @@ public class ArbiterRegistry {
     }
 
     @GetMapping("/arbiter/find")
-    public Arbiter findArbiter(String uuid) {
-        Optional<Arbiter> arbiter = arbiterList.stream().filter(o -> o.getUuid().equals(uuid)).findFirst();
+    public Arbiter findArbiter(String uuid, String validationId) {
+        Optional<Arbiter> arbiter = Optional.empty();
+        if (uuid != null && !uuid.isEmpty()) {
+            arbiter = arbiterList.stream().filter(o -> o.getUuid().equals(uuid)).findFirst();
+        } else if (validationId != null && !validationId.isEmpty()) {
+            arbiter = arbiterList.stream().filter(o -> o.getValidationId().equals(validationId)).findFirst();
+        }
         return arbiter.orElse(null);
     }
 }
