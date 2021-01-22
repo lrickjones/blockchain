@@ -352,6 +352,37 @@ public class BlockchainController {
 		return contract;
 	}
 
+	@PostMapping("/contract/approve-access")
+	public Contract addApproveAccess(String contractId, String custodianUuId, String userName, String password, String status) throws JsonProcessingException {
+		// find contract, if active
+		Contract contract = findContract(contractId);
+		if (contract == null) return null;
+		// Find custodian
+		Custodian custodian = Rest.get("http://localhost:8080/custodian/find",Custodian.class,"uuid",custodianUuId);
+		if (custodian == null) return null;
+		// Validate custodian
+		String validationId = Hasher.hash(Credentials.builder().userName(userName).password(password).build().toString());
+		if (!validationId.equals(custodian.getValidationId())) return null;
+		// record both transactions in the verification record
+		verifications.addTransaction(custodianUuId, contract.getApplicantId(), custodian);
+		// update contract from copy
+		String approvalStatus = Contract.ACCESS_DENIED;
+		if (status.equals("access approved")) {
+			approvalStatus = Contract.ACCESS_APPROVED;
+		}
+		Contract newContract = contract.toBuilder()
+				.arbiterId(custodian.getUuid())
+				.currentStatus(approvalStatus)
+				.owner(Contract.APPLICANT)
+				.lastVerification(verificationRecord().getIndex())
+				.build();
+		// add contract transaction to requests
+		requests.addTransaction(custodian.getUuid(), contract.getApplicantId(),newContract);
+		// update the registry that there is a new or updated contract
+		updateRegister(custodian.getUuid(), contract.getApplicantId(),contract.getContractId(),requestRecord().getIndex());
+		return contract;
+	}
+
 	@GetMapping("/contract/applicant/verify")
 	public boolean verifyApplicant(Applicant applicant) {
 		boolean result = false;

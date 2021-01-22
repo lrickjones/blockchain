@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 public class Contract extends Entity {
 
+
     @Builder.Default private final String type = "contract";
     // status strings
     static public final String ACCOUNT_REQUEST = "account request";
@@ -23,6 +24,7 @@ public class Contract extends Entity {
     static public final String FAILED_REVIEW = "failed review";
     static public final String TOKEN_GENERATED = "token generated";
     static public final String ACCESS_DENIED = "access denied";
+    public static final String ACCESS_APPROVED = "access approved";
     // owner strings
     public static final String APPLICANT = "applicant";
     public static final String CUSTODIAN = "custodian";
