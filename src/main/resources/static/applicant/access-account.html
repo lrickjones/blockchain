@@ -5,7 +5,7 @@
 <head>
     <meta charset = "ISO-8859-1" />
     <link href = "../css/styles.css" rel = "stylesheet"/>
-    <title>Arbiter Approve Access Request</title>
+    <title>Applicant Access Account</title>
 </head>
 <body>
 <nav id="navbar" class="navbar navbar-expand-lg navbar-light">
@@ -23,10 +23,10 @@
                 <a class="nav-link" href="/contract/contracts.html">Contracts</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/">Applicant</a>
+                <a class="nav-link" href="/"><b>Applicant</b></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/arbiter/login.html"><b>Arbiter</b></a>
+                <a class="nav-link" href="/arbiter/login.html">Arbiter</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/custodian/login.html">Custodian</a>
@@ -40,38 +40,16 @@
 </nav>
 <br>
 <div class="container">
-    <div class="container-fluid row justify-content-center h2 w-100 text-darkblue">Approve Access Request</div>
-    <div class="container-fluid row w-100" style="height:100vh">
-        <div class="container-fluid col border border-secondary rounded bg-lightblue">
-            <div class="container-fluid overflow-auto"  style="height:75vh;">
-                <div id="contracts"></div>
-            </div>
-            <div class="row">
-                <div class="col" id="register"></div>
-                <div class="col" id="request"></div>
-                <div class="col" id="verification"></div>
-            </div>
-        </div>
+    <div class="container-fluid row justify-content-center h2 w-100 text-darkblue">Request Account Information</div>
+    <div class="container-fluid row w-100">
         <div class="container-fluid col">
             <div class="wrapper fadeInDown">
                 <div id="formContent">
                     <!-- Tabs Titles -->
-                    <div class="h3 container fadeIn first text-barlea">Approval</div>
+                    <div class="h3 container fadeIn first text-barlea">Credentials</div>
                     <!-- Login Form -->
                     <div id="error" class="text-danger"></div>
-                    <div class="input-group justify-content-center">
-                        <div class="input-group-prepend my-2">
-                            <button type="button" class="btn bg-darkblue text-lightblue">Select</button>
-                            <button type="button" class="btn dropdown-toggle bg-darkblue text-lightblue dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="sr-only">Toggle Dropdown</span>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" onclick="updateStatus('access approved')">Access Approved</a>
-                                <a class="dropdown-item" onclick="updateStatus('access denied')">Access Denied</a>
-                            </div>
-                        </div>
-                        <input type="text" id="status" class="fadeIn third hidden" style="width:62%;" name="status" placeholder="search result">
-                    </div>
+                    <input type="text" id="token" class="fadeIn third" name="token" placeholder="token">
                     <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
                     <input type="password" id="password" class="fadeIn second hidden" name="password" placeholder="password">
                     <input  type="button" class="fadeIn fourth" onclick="validate()" value="Submit Request">
@@ -88,42 +66,39 @@
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-<script src="/js/blockchain.js"></script>
-
 <script>
    $(document).ready(function() {
-        var url_string = window.location.href;
-        var url = new URL(url_string);
-        var contractId = url.searchParams.get("contractId");
-        $("#contract-number").append(contractId);
-        renderContractHistory(contractId);
+     var url_string = window.location.href;
+     var url = new URL(url_string);
+     var contractId = url.searchParams.get("contractId");
+     if (contractId) {
+          $.getJSON("/contract/find?contractId=" + contractId, function(contract){
+                var token = document.getElementById("token");
+                token.value = contract.tokenId;
+          });
+     }
    });
-
-   function updateStatus(newStatus) {
-     var status = document.getElementById("status");
-     status.value = newStatus;
-   }
 
    function validate() {
      var url_string = window.location.href;
      var url = new URL(url_string);
      var contractId = url.searchParams.get("contractId");
-     var arbiterUuId = url.searchParams.get("arbiterUuId");
+     var applicantUuId = url.searchParams.get("applicantUuId");
      var userName = document.getElementById("userName").value;
      var password = document.getElementById("password").value;
-     var status = document.getElementById("status").value;
+     var token = document.getElementById("token").value;
          $.ajax({
             type : "POST",
-            url : "/contract/approve-request?contractId=" + contractId + "&arbiterUuId=" + arbiterUuId + "&userName="+userName+"&password="+password+"&status="+status,
-            success : function(data) {
-                if (!data) {
-                    alert("Submission Failed - Check Username and Password");
+            url : "/contract/account-access?contractId=" + contractId +"&userName="+userName+"&password="+password+"&applicantUuId="+applicantUuId+"&token="+token,
+            success : function(contract) {
+                if (contract) {
+                    window.location.replace("/custodian/view-data.html?contractId=" + contractId + "&token="+token);
                 } else {
-                    window.location.replace("/arbiter/account.html?arbiterUuId="+arbiterUuId);
+                    alert("Failed to update contract - Check User and Password");
                 }
             },
             error : function(xhr) {
-                alert(xhr.statusText);
+                alert(xhr.status);
             }
          });
      }

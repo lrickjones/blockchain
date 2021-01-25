@@ -108,9 +108,12 @@
           } else if (contract.currentStatus.localeCompare("account found") == 0) {
               url = "/arbiter/approve-request.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
               instructions = "Review application and approve or deny request";
-          } else if (contract.currentStatus.localeCompare("account found") == 0) {
+          } else if (contract.currentStatus.localeCompare("passed review") == 0) {
              url = "/custodian/approve-access.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
              instructions = "Review application and approve or deny access";
+          } else if (contract.currentStatus.localeCompare("access approved") == 0) {
+             url = "/applicant/access-account.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
+             instructions = "Login and access data";
           }
       }
       var div = "<div class='container-fluid w-100 p-1 rounded bg-darkblue mb-4' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";

@@ -5,7 +5,7 @@
 <head>
     <meta charset = "ISO-8859-1" />
     <link href = "../css/styles.css" rel = "stylesheet"/>
-    <title>Arbiter Account Page</title>
+    <title>View Account Information</title>
 </head>
 <body>
 <nav id="navbar" class="navbar navbar-expand-lg navbar-light">
@@ -26,10 +26,10 @@
                 <a class="nav-link" href="/">Applicant</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/arbiter/login.html"><b>Arbiter</b></a>
+                <a class="nav-link" href="/arbiter/login.html">Arbiter</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/custodian/login.html">Custodian</a>
+                <a class="nav-link" href="/custodian/login.html"><b>Custodian</b></a>
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
@@ -38,15 +38,12 @@
         </form>
     </div>
 </nav>
-
-<div class="h2 container text-darkblue">Welcome <span id="firstName"></span>, </div>
 <br>
 <div class="container">
-    <div class="h3 container text-teal">Here are your pending work items:</div>
-
-    <div class="wrapper fadeInDown">
-        <div class="container-fluid">
-            <div id="contracts"></div>
+    <div class="container-fluid row justify-content-center h2 w-100 text-darkblue">Account Information</div>
+    <div class="container-fluid row w-100">
+        <div class="col-fluid w-100 justify-content-center text-center">
+            <img src="../img/holy-grail.png" alt="Holy Grail">
         </div>
     </div>
 
@@ -60,21 +57,4 @@
 
 <script src="/js/blockchain.js"></script>
 
-<script>
-
-   $(document).ready(function() {
-     var url_string = window.location.href;
-     var url = new URL(url_string);
-     arbiterUuId = url.searchParams.get("arbiterUuId");
-     renderContractsByOwner("arbiter","arbiterUuId",arbiterUuId);
-     $.getJSON("/arbiter/find?uuid=" + arbiterUuId, function(value){
-        if (!value) {
-            alert("Custodian not found");
-        } else {
-            $("#firstName").append("Judge " + value.personalInfo.lastName);
-        }
-     });
-   });
-
-</script>
 </html>

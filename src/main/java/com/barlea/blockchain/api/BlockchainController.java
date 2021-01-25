@@ -371,7 +371,7 @@ public class BlockchainController {
 			approvalStatus = Contract.ACCESS_APPROVED;
 		}
 		Contract newContract = contract.toBuilder()
-				.arbiterId(custodian.getUuid())
+				.custodianId(custodian.getUuid())
 				.currentStatus(approvalStatus)
 				.owner(Contract.APPLICANT)
 				.lastVerification(verificationRecord().getIndex())
@@ -380,6 +380,35 @@ public class BlockchainController {
 		requests.addTransaction(custodian.getUuid(), contract.getApplicantId(),newContract);
 		// update the registry that there is a new or updated contract
 		updateRegister(custodian.getUuid(), contract.getApplicantId(),contract.getContractId(),requestRecord().getIndex());
+		return contract;
+	}
+
+	@PostMapping("/contract/account-access")
+	public Contract addAccountAccess(String contractId, String userName, String password, String applicantUuId, String token) throws JsonProcessingException {
+		// find contract, if active
+		Contract contract = findContract(contractId);
+		if (contract == null) return null;
+		// Find custodian
+		Applicant applicant = Rest.get("http://localhost:8080/applicant/find",Applicant.class,"uuid",applicantUuId);
+		if (applicant == null) return null;
+		// Validate custodian
+		String validationId = Hasher.hash(Credentials.builder().userName(userName).password(password).build().toString());
+		if (!validationId.equals(applicant.getValidationId())) return null;
+		if (!token.equals(contract.getTokenId())) return null;
+		// record both transactions in the verification record
+		verifications.addTransaction(applicantUuId, contract.getCustodianId(), applicant);
+		verifications.addTransaction(applicantUuId,contract.getCustodianId(),contract);
+		// update contract from copy
+		Contract newContract = contract.toBuilder()
+				.applicantId(applicant.getUuid())
+				.currentStatus(Contract.DATA_ACCESSED)
+				.owner(Contract.APPLICANT)
+				.lastVerification(verificationRecord().getIndex())
+				.build();
+		// add contract transaction to requests
+		requests.addTransaction(applicant.getUuid(), contract.getCustodianId(),newContract);
+		// update the registry that there is a new or updated contract
+		updateRegister(applicant.getUuid(), contract.getCustodianId(),contract.getContractId(),requestRecord().getIndex());
 		return contract;
 	}
 
