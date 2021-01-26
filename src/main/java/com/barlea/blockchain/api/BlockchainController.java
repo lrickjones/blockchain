@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +36,8 @@ public class BlockchainController {
 	private final Blockchain requests = new Blockchain();
 
 	private final Blockchain verifications = new Blockchain();
+
+	private final Blockchain communal = new Blockchain();
 
 	@Autowired
 	private ObjectMapper mapper;
@@ -451,5 +454,26 @@ public class BlockchainController {
 		}
 		return result;
 	}
+
+	@PostMapping("/public/add")
+	public Communal requestAccessToken(String contractId, String contractStatus, String authorityDescription, String subjectZIP,String applicantName, String applicantZIP, String arbiterName, String arbiterJurisdiction, String custodianName) throws JsonProcessingException {
+		Communal communal = Communal.builder()
+				.contractId(contractId)
+				.contractStatus(contractStatus)
+				.authorityDescription(authorityDescription)
+				.subjectZIP(subjectZIP)
+				.applicantName(applicantName)
+				.applicantZIP(applicantZIP)
+				.arbiterName(arbiterName)
+				.arbiterJurisdiction(arbiterJurisdiction)
+				.custodianName(custodianName)
+				.build();
+		// add contract transaction to requests
+		requests.addTransaction(contractId, contractId, communal);
+		// update the registry that there is a new or updated contract
+		updateRegister(contractId,contractId,communal.getContractId(),requestRecord().getIndex());
+		return communal;
+	}
+
 
 }
