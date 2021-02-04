@@ -179,6 +179,33 @@
       $("#contracts").append(div);
    }
 
+    function renderPublicBlockchain() {
+      $.getJSON("/public/chain", function(result){
+          $.each(result, function(key,value) {
+            if (key.localeCompare("chain") == 0) {
+                $.each(value, function(idx,block) {
+                    if (block.transactions.length > 0) {
+                        $.each(block.transactions, function(cnt, record) {
+                            renderPublicRecord(record.entity);
+                        });
+                    }
+                });
+            }
+          });
+       });
+    }
+
+   function renderPublicRecord(record) {
+      var div = "<div class='container-fluid w-100 p-1 rounded bg-darkblue mb-4' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
+      div += "<div class='row px-2'>"
+      div += "<div class='col-9 text-left text-barlea'>";
+      for (const [key,value] of Object.entries(record)) {
+        div += "<div><label class= 'h4' for='" + key + "'>" + key + "</label><p id='" + key + "'>" + value + "</p></div>";
+      }
+      div += "</div></div>";
+      $("#contracts").append(div);
+   }
+
    function renderContractHistory(contractId) {
          $.getJSON("/request/history?contractId=" + contractId, function(result){
              $.each(result, function(key, contract) {

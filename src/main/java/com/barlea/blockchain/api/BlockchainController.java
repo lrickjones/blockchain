@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -100,7 +99,6 @@ public class BlockchainController {
 
 	private RecordResponse updateRegister(String sender, String receiver, String contractId, int index) {
 		Block block = register.lastBlock();
-		boolean exists = false;
 		if (block.getIndex() > 1) {
 			for (Transaction t:block.getTransactions()) {
 				// copy over every contract except one being updated
@@ -386,6 +384,23 @@ public class BlockchainController {
 		return contract;
 	}
 
+	private void postToPublic(Contract contract) {
+		Applicant applicant = Rest.get("http://localhost:8080/applicant/find",Applicant.class,"uuid",contract.getApplicantId());
+		Arbiter arbiter = Rest.get("http://localhost:8080/arbiter/find",Arbiter.class,"uuid",contract.getArbiterId());
+		Custodian custodian = Rest.get("http://localhost:8080/custodian/find",Custodian.class,"uuid",contract.getCustodianId());
+		Authority authority = Rest.get("http://localhost:8080/authority/find",Authority.class,"uuid",contract.getAuthorityId());
+		Rest.post("http://localhost:8080/public/add",Communal.class,
+				"contractId",contract.getContractId(),
+				"contractStatus",contract.getCurrentStatus(),
+				"authorityDescription",authority.getDescription(),
+				"subjectZIP",authority.getSubject().getHomeDomicile().getZip(),
+				"applicantName",applicant.getName().getLastName() + ", " + applicant.getName().getFirstName(),
+				"applicantZIP","",
+				"arbiterName",arbiter.getPersonalInfo().getLastName() + ", " + arbiter.getPersonalInfo().getFirstName(),
+				"arbiterJurisdiction",arbiter.getJurisdiction(),
+				"custodianName",custodian.getName());
+	}
+
 	@PostMapping("/contract/account-access")
 	public Contract addAccountAccess(String contractId, String userName, String password, String applicantUuId, String token) throws JsonProcessingException {
 		// find contract, if active
@@ -412,6 +427,7 @@ public class BlockchainController {
 		requests.addTransaction(applicant.getUuid(), contract.getCustodianId(),newContract);
 		// update the registry that there is a new or updated contract
 		updateRegister(applicant.getUuid(), contract.getCustodianId(),contract.getContractId(),requestRecord().getIndex());
+		postToPublic(newContract);
 		return contract;
 	}
 
@@ -437,11 +453,7 @@ public class BlockchainController {
 		Block contractBlock = requests.blockAt(active.getContractIndex());
 		if (contractBlock == null) return null;
 		Optional<Transaction> contractTransaction = contractBlock.getTransactions().stream().filter(t->((Contract)t.getEntity()).getContractId().equals(contractId)).findFirst();
-		if (contractTransaction.isPresent()) {
-			return (Contract) contractTransaction.get().getEntity();
-		} else {
-			return null;
-		}
+		return contractTransaction.map(value -> (Contract) value.getEntity()).orElse(null);
 	}
 
 	@GetMapping("/utils/validationId")
@@ -456,8 +468,8 @@ public class BlockchainController {
 	}
 
 	@PostMapping("/public/add")
-	public Communal requestAccessToken(String contractId, String contractStatus, String authorityDescription, String subjectZIP,String applicantName, String applicantZIP, String arbiterName, String arbiterJurisdiction, String custodianName) throws JsonProcessingException {
-		Communal communal = Communal.builder()
+	public Communal addPublicBlock(String contractId, String contractStatus, String authorityDescription, String subjectZIP,String applicantName, String applicantZIP, String arbiterName, String arbiterJurisdiction, String custodianName) throws JsonProcessingException {
+		Communal communalRecord = Communal.builder()
 				.contractId(contractId)
 				.contractStatus(contractStatus)
 				.authorityDescription(authorityDescription)
@@ -468,11 +480,25 @@ public class BlockchainController {
 				.arbiterJurisdiction(arbiterJurisdiction)
 				.custodianName(custodianName)
 				.build();
+
 		// add contract transaction to requests
-		requests.addTransaction(contractId, contractId, communal);
-		// update the registry that there is a new or updated contract
-		updateRegister(contractId,contractId,communal.getContractId(),requestRecord().getIndex());
-		return communal;
+		communal.addTransaction(contractId, contractId, communalRecord);
+		// (1) - Calculate the Proof of Work
+		Block lastBlock = communal.lastBlock();
+
+		Long lastProof = lastBlock.getProof();
+
+		Long proof = BlockProofOfWorkGenerator.proofOfWork(lastProof);
+
+		// (2) - Add pending transactions to new block
+		communal.createBlock(proof, lastBlock.hash(mapper));
+
+		return communalRecord;
+	}
+
+	@GetMapping("/public/chain")
+	public ChainResponse getPublicChain() {
+		return ChainResponse.builder().chain(communal.getChain()).length(communal.getChain().size()).build();
 	}
 
 

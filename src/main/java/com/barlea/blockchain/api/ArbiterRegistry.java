@@ -1,7 +1,6 @@
 package com.barlea.blockchain.api;
 
 import com.barlea.blockchain.entities.Arbiter;
-import com.barlea.blockchain.entities.Authority;
 import com.barlea.blockchain.entities.Name;
 import org.springframework.web.bind.annotation.*;
 

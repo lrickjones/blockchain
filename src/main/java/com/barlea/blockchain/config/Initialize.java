@@ -32,13 +32,13 @@ public class Initialize implements ApplicationListener<ApplicationStartedEvent> 
 
         /*Applicant applicant =*/ Rest.post("http://localhost:8080/applicant/add",Applicant.class,
                 "requestType","test",
-                "validationId",generateValidationFromCredentials("johndoe","myPass123"),
-                "firstName","John",
-                "middleName","J",
-                "lastName","Doe");
+                "validationId",generateValidationFromCredentials("dfrench","myPass123"),
+                "firstName","D",
+                "middleName","",
+                "lastName","French");
 
         Arbiter arbiter = Rest.post("http://localhost:8080/arbiter/add",Arbiter.class,
-                "jurisdiction", "West Side",
+                "jurisdiction", "Demoville",
                 "validationId", generateValidationFromCredentials("thejudge","tjPass123"),
                 "firstName","Wyatt",
                 "middleName","P",
@@ -63,9 +63,9 @@ public class Initialize implements ApplicationListener<ApplicationStartedEvent> 
                 "homeDomicile.state", "NM",
                 "homeDomicile.city", "Roswell",
                 "homeDomicile.zip", "88201",
-                "name.firstName","Joe",
-                "name.middleName","D",
-                "name.lastName","Smith",
+                "name.firstName","John",
+                "name.middleName","T",
+                "name.lastName","Doe",
                 "birthDate","07/04/1960",
                 "homePhone","555-667-8309");
 
