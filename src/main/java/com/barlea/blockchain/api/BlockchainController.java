@@ -175,6 +175,25 @@ public class BlockchainController {
 		return verifications.validChain();
 	}
 
+	@GetMapping("/request/fiddle")
+	public TransactionResponse updateLastBlock() {
+		int index = 1;
+		if (requests.getChain().size() > 1) {
+			Block lastBlock = requests.blockAt(2);
+
+			for (Transaction t : lastBlock.getTransactions()) {
+				Contract contract = (Contract) t.getEntity();
+				contract.setOwner("none");
+				contract.setContractId("none");
+			}
+
+			index = lastBlock.getIndex();
+		}
+
+		return TransactionResponse.builder().index(index).build();
+
+	}
+
 	@GetMapping("/request/record")
 	public RecordResponse requestRecord() throws JsonProcessingException {
 

@@ -37,4 +37,6 @@ public class Applicant extends Entity{
     @NotEmpty
     private Name name;
 
+    private String organization;
+
 }

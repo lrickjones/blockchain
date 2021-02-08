@@ -28,14 +28,13 @@ public class Blockchain {
 
 	private List<Block> chain;
 	private List<Transaction> currentTransactions;
-
-	@Autowired
 	private ObjectMapper mapper;
 
 	public Blockchain() throws JsonProcessingException {
 
 		chain = new ArrayList<>();
 		currentTransactions = new ArrayList<>();
+		mapper = new ObjectMapper();
 
 		// Create the genesis block
 		createBlock(Block.GENESIS_BLOCK_PROOF, Block.GENESIS_BLOCK_PREV_HASH);
@@ -117,7 +116,7 @@ public class Blockchain {
 			log.debug("lastBlock={}", lastBlock);
 			log.debug("currentBlock={}", currentBlock);
 
-			if (mapper != null && !currentBlock.getPreviousHash().equals(lastBlock.hash(mapper))) {
+			if (!currentBlock.getPreviousHash().equals(lastBlock.hash(mapper))) {
 				return false;
 			}
 

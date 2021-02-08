@@ -3,33 +3,52 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <head>
     <meta charset="UTF-8">
-    <link href = "css/styles.css" rel = "stylesheet"/>
-    <title>BARLEA Demo</title>
+    <link href = "/css/styles.css" rel = "stylesheet"/>
+    <title>BARLEA Examples</title>
 </head>
 <body>
 
-<div class="wrapper fadeInDown">
-    <div id="formContent" class="pt-4">
-        <!-- Tabs Titles -->
 
-        <!-- Icon -->
-        <div class="fadeIn first">
-            <img src="img/circle-logo.png" id="icon" alt="User Icon" style="width:240px;height:240px;"/>
-        </div>
-
-        <!-- Login Form -->
-        <div id="error" class="text-danger"></div>
-        <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
-        <input type="password" id="password" class="fadeIn third hidden" name="password" placeholder="password">
-        <input  type="button" class="fadeIn fourth" onclick="validate()" value="Log In">
-
-        <!-- Remind Passowrd -->
-        <div id="formFooter">
-            <a class="underlineHover" href="#">Forgot Password?</a>
-        </div>
-
+<div class="fadeIn first">
+    <div class="row bg-teal px-4">
+        <img class="m-4" src="/img/barlea-token.png" id="icon" alt="BARLEA Token" style="width:240px;height:240px;"/>
     </div>
 </div>
+
+<div class="row justify-content-center fadeIn second no-gutters bg-lightblue pt-4">
+    <div class="col-2 no-gutters">
+        <img class="float-left" src="/img/austin-distel-DS1hZ4xzD7M-unsplash.jpg" alt="Cyber Cafe" style="width:240px;height:300px;"/>
+    </div>
+    <div class="col-3 bg-lightblue no-gutters">
+        <div class="container my-4">
+            <h1>Exceptional Access</h1>
+        </div>
+        <div class="container my-4">
+            Enforce warrants; restrict law enforcement access; protect privacy of end-users; reduce cost of compliance
+        </div>
+        <div class="container">
+            <a  class="btn btn-primary my-4" href="/applicant/login.html">View Example</a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center fadeIn third no-gutters bg-lightblue">
+    <div class="col-3 bg-lightblue no-gutters">
+        <div class="container my-4">
+            <h1>HIPAA</h1>
+        </div>
+        <div class="container my-4">
+            Patient control of EHR portability; transparency and accountability for reducing audits
+        </div>
+        <div class="container">
+            <a  class="btn btn-primary my-4" href="/hipaa/applicant/login.html">View Example</a>
+        </div>
+    </div>
+    <div class="col-2 no-gutters">
+        <img class="float-right" src="/img/national-cancer-institute-xcN1taJ2y0M-unsplash.jpg" alt="Doctor with Scan" style="width:240px;height:300px;"/>
+    </div>
+</div>
+
 
 </body>
 <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -37,46 +56,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
-<script>
-function validate() {
-    var url_string = window.location.href;
-    var url = new URL(url_string);
-    var userName = document.getElementById("userName").value;
-    var password = document.getElementById("password").value;
-    document.getElementById("error").innerHTML = "";
-    if (!userName || !password) {
-        $("#error").append("Must input a username and password");
-    } else {
-        $.ajax({
-            type : "GET",
-            url : "/utils/validationId?userName="+userName+"&password="+password,
-            success : function(data) {
-                if (!data.localeCompare("Invalid")) {
-                    $("#error").append("Invalid username or password");
-                } else {
-                    $.ajax({
-                        type: "GET",
-                        url : "/applicant/find?validationId="+data,
-                        success : function(value) {
-                            if (!value) {
-                                $("#error").append("Invalid username or password");
-                            } else {
-                                window.location.replace("/applicant/account.html?applicantUuId="+value.uuid);
-                            }
-                        },
-                        error : function(data) {
-                            $("#error").append("System Error: " + data);
-                        }
-                    });
-                }
-            },
-            error : function(data) {
-                $("#error").append("System Error: " + data);
-            }
-        });
-    }
-}
-</script>
 
 </html>
