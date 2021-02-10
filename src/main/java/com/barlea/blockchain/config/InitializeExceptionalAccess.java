@@ -20,8 +20,6 @@ import java.util.UUID;
 @RestController
 public class InitializeExceptionalAccess{
 
-    static private boolean initialized = false;
-
     static private String generateValidationFromCredentials(String userName, String password) {
         Credentials creds = Credentials.builder().userName(userName).password(password).build();
         try {
@@ -32,10 +30,9 @@ public class InitializeExceptionalAccess{
     }
 
     @GetMapping("/exceptional-access/init")
-    public String initialize() {
-        if (initialized) return "{\"result\":\"true\"}";
+    public void initialize() {
 
-        initialized = true;
+        Rest.get("http://localhost:8080/blockchain/reset",Void.class);
 
         /*Applicant applicant =*/ Rest.post("http://localhost:8080/applicant/add",Applicant.class,
                 "requestType","test",
@@ -80,7 +77,6 @@ public class InitializeExceptionalAccess{
                 "contractId", UUID.randomUUID().toString(),
                 "authorityId", authority.getUuid());
 
-        return "{\"result\":\"success\"}";
 
     }
 }

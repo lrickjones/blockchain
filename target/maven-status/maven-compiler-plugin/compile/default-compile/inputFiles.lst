@@ -12,10 +12,11 @@ C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\entit
 C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\service\Blockchain.java
 C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\api\BlockchainController.java
 C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\entities\Entity.java
-C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\config\Initialize.java
 C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\domain\Block.java
 C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\api\ApplicantRegistry.java
 C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\api\ArbiterRegistry.java
+C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\config\InitializeExceptionalAccess.java
+C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\config\InitializeHippa.java
 C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\entities\Custodian.java
 C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\api\CustodianRegistry.java
 C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\entities\Arbiter.java
@@ -27,3 +28,4 @@ C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\entit
 C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\entities\Applicant.java
 C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\service\Hasher.java
 C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\model\TransactionResponse.java
+C:\Users\rickj\IdeaProjects\blockchain\src\main\java\com\barlea\blockchain\entities\Communal.java

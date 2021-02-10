@@ -46,6 +46,18 @@ public class BlockchainController {
 	public BlockchainController() throws JsonProcessingException {
 	}
 
+	@GetMapping("/blockchain/reset")
+	public void resetBlockchain() {
+		try {
+			register.clear();
+			requests.clear();
+			verifications.clear();
+			communal.clear();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@GetMapping("/register/record")
 	public RecordResponse registerRecord() throws JsonProcessingException {
 

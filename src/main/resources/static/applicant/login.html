@@ -42,9 +42,7 @@
 <script>
 
    $(document).ready(function() {
-      $.getJSON("/exceptional-access/init", function(value){
-            $("#status").append(value.result);
-      });
+      $.getJSON("/exceptional-access/init");
    });
 
 function validate() {

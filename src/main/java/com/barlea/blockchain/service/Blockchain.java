@@ -135,4 +135,10 @@ public class Blockchain {
 	}
 
 
+    public void clear() throws JsonProcessingException {
+		chain.clear();
+		currentTransactions.clear();
+		// Recreate the Genesis Block
+		createBlock(Block.GENESIS_BLOCK_PROOF, Block.GENESIS_BLOCK_PREV_HASH);
+    }
 }

@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
@@ -15,7 +17,7 @@ import java.util.UUID;
  * InitializeExceptionalAccess entities used for demonstrating workflow
  * @author L Rick Jones
  */
-@Component
+@RestController
 public class InitializeHippa implements ApplicationListener<ApplicationStartedEvent> {
 
     static private String generateValidationFromCredentials(String userName, String password) {
@@ -27,8 +29,10 @@ public class InitializeHippa implements ApplicationListener<ApplicationStartedEv
         }
     }
 
-    @Override
+    @GetMapping("/hipaa/init")
     public void onApplicationEvent(@NotNull ApplicationStartedEvent event) {
+
+        Rest.get("http://localhost:8080/blockchain/reset",Void.class);
 
         /*Applicant applicant =*/ Rest.post("http://localhost:8080/applicant/add",Applicant.class,
                 "requestType","test",
