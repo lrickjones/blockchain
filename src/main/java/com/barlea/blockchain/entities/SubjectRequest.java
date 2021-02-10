@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class HipaaApplication {
+public class SubjectRequest {
     private String requestType;
 
-    private String patientName;
+    private Name patientName;
 
     private Address patientAddress;
 

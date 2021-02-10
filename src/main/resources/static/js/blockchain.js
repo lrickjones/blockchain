@@ -114,6 +114,9 @@
           } else if (contract.currentStatus.localeCompare("access approved") == 0) {
              url = "/applicant/access-account.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
              instructions = "Login and access data";
+          } else if (contract.currentStatus.localeCompare("record request") == 0) {
+              url = "/hipaa/custodian/find-account.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
+              instructions = "Lookup account and verify permission";
           }
       }
       var div = "<div class='container-fluid w-100 p-1 rounded bg-darkblue mb-4' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
@@ -128,13 +131,19 @@
       div += "<div>";
       getApplicant(contract.applicantId);
       if (applicant) {
-        div += "<b>Officer: </b> " + applicant.name.lastName + ", " + applicant.name.firstName;
+        div += "<b>Applicant: </b> " + applicant.name.lastName + ", " + applicant.name.firstName;
       }
       div += "</div>";
+
+
 
       div += "<div>";
       getAuthority(contract.authorityId);
       div += "<div class='border border-dark rounded p-2'> "
+        if (contract.application) {
+          div += "<div><b>Subject: </b> " + contract.application.patientName.lastName + ", " + contract.application.patientName.firstName + "</div>";
+          div += "<div><b>Request: </b> " + contract.application.requestType + "</div>";
+        }
       if (authority) {
         custodian = "";
         if (authority.custodianId) {
@@ -245,10 +254,8 @@
        }
 
       function renderCustodian(record) {
-         var div = "<div class='container-fluid w-100 p-1 rounded bg-darkblue mb-4' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
-         div += "<div class='row px-2'>"
-         div += "<div class='col-9 text-left text-barlea'>";
-         div += "<div id='" + record.uuid + "'>" + record.name + "</div>";
-         div += "</div></div>";
+         var div = "<a class='dropdown-item' onclick=\"updateCustodian('";
+         div += record.name + "','" + record.uuid + "')\">";
+         div += record.name + "</a>";
          $("#custodians").append(div);
       }

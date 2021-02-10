@@ -5,7 +5,7 @@
 <head>
     <meta charset = "ISO-8859-1" />
     <link href = "/css/styles.css" rel = "stylesheet"/>
-    <title>Applicant Account Page</title>
+    <title>Active Contracts</title>
 </head>
 <body>
 <nav id="navbar" class="navbar navbar-expand-lg navbar-light">
@@ -20,10 +20,10 @@
                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/hipaa/contract/contracts.html">Contracts</a>
+                <a class="nav-link" href="/hipaa/contract/contracts.html"><b>Contracts</b></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/hipaa/applicant/login.html"><b>Applicant</b></a>
+                <a class="nav-link" href="/hipaa/applicant/login.html">Applicant</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/hipaa/arbiter/login.html">Arbiter</a>
@@ -39,19 +39,26 @@
     </div>
 </nav>
 
-<div class="h2 container text-darkblue">Welcome <span id="firstName"></span>, </div>
+<div class="h2 container text-darkblue">Active Contracts </div>
 <br>
 <div class="container">
-    <div class="h3 container text-teal">What would you like to do today?:</div>
 
     <div class="wrapper fadeInDown">
-        <div class="container-fluid">
+        <div class="container-fluid overflow-auto" style="height:75vh;">
             <div id="contracts"></div>
+        </div>
+        <div class="container-fluid row">
+            <div class="col" id="register"></div>
+            <div class="col" id="request"></div>
+            <div class="col" id="verification"></div>
         </div>
     </div>
 
 </div>
 </body>
+<footer>
+    <!--div>Monkey icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div-->
+</footer>
 <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -63,17 +70,28 @@
 <script>
 
    $(document).ready(function() {
-     var url_string = window.location.href;
-     var url = new URL(url_string);
-     applicantId = url.searchParams.get("applicantUuId");
-     renderContractsByOwner("applicant","applicantUuId",applicantId);
-     $.getJSON("/applicant/find?uuid=" + applicantId, function(value){
-        if (!value) {
-            alert("Applicant not found");
-        } else {
-            $("#firstName").append(value.name.firstName);
-        }
-     });
+     renderAllContracts("","");
+       $.getJSON("/register/validate", function(result){
+            if (result) {
+                $("#register").append("<input type='checkbox' checked on-click='return false'> Register Chain Valid");
+            } else {
+                $("#register").append("<span class='text-danger'>Register Chain Invalid!</span>");
+            }
+       });
+       $.getJSON("/request/validate", function(result){
+            if (result) {
+                $("#request").append("<input type='checkbox' checked on-click='return false'> Request Chain Valid");
+            } else {
+                $("#request").append("<span class='text-danger'>Request Chain Invalid!</span>");
+            }
+       });
+       $.getJSON("/verification/validate", function(result){
+            if (result) {
+                $("#verification").append("<input type='checkbox' checked on-click='return false'> Verification Chain Valid");
+            } else {
+                $("#verification").append("<span class='text-danger'>Verification Chain Invalid!</span>");
+            }
+       });
    });
 
 </script>

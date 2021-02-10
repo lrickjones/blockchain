@@ -20,7 +20,7 @@
                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/contract/contracts.html">Contracts</a>
+                <a class="nav-link" href="/hipaa/contract/contracts.html">Contracts</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/hipaa/applicant/login.html"><b>Applicant</b></a>
@@ -70,13 +70,24 @@
             </div >
         </div>
         <div class="container-fluid col">
-            <div class ="row"><span id="custodians"></span></div>
             <div class="wrapper fadeInDown">
                 <div id="formContent">
                     <!-- Tabs Titles -->
                     <div class="h3 container fadeIn first text-barlea">Send Request</div>
                     <!-- Login Form -->
                     <div id="error" class="text-danger"></div>
+                    <div class="input-group justify-content-center">
+                        <div class="input-group-prepend my-2">
+                            <button type="button" class="btn bg-darkblue text-lightblue">Source</button>
+                            <button type="button" class="btn dropdown-toggle bg-darkblue text-lightblue dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <div class="dropdown-menu" id="custodians">
+                            </div>
+                        </div>
+                        <input type="text" id="custodian" class="fadeIn second hidden" style="width:62%;" name="custodian" placeholder="Data Provider">
+                        <input type="hidden" id="custodianId" class="fadeIn second hidden" style="width:62%;" name="custodianId">
+                    </div>
                     <div class="input-group justify-content-center">
                         <div class="input-group-prepend my-2">
                             <button type="button" class="btn bg-darkblue text-lightblue">Select</button>
@@ -138,18 +149,53 @@
      status.value = newStatus;
    }
 
+  function updateCustodian(name, id) {
+     var custodian = document.getElementById("custodian");
+     custodian.value = name;
+     var custodianId = document.getElementById("custodianId");
+     custodianId.value = id;
+   }
+
    function validate() {
      var url_string = window.location.href;
      var url = new URL(url_string);
      var applicantUuId = url.searchParams.get("applicantUuId");
      var userName = document.getElementById("userName").value;
      var password = document.getElementById("password").value;
+     var first =  document.getElementById("name.firstName");
+     var middle =  document.getElementById("name.middleName");
+     var last =  document.getElementById("name.lastName");
+
+     var address1 = document.getElementById("homeDomicile.address1");
+     var address2 = document.getElementById("homeDomicile.address2");
+     var state = document.getElementById("homeDomicile.state");
+     var city = document.getElementById("homeDomicile.city");
+     var zip = document.getElementById("homeDomicile.zip");
+
+     var home = document.getElementById("homePhone");
+     var work = document.getElementById("workPhone");
+
+     var month = document.getElementById("birthdate.month");
+     var day = document.getElementById("birthdate.day");
+     var year = document.getElementById("birthdate.year");
+
+     var requestType = document.getElementById("status");
+     var custodianUuId = document.getElementById("custodianId");
+
+     if (!requestType || !custodianUuId) {
+        alert("Check request type and data provider fields");
+     } else {
          $.ajax({
             type : "POST",
-            url : "/contract/record-request?userName="+userName+"&password="+password+"&applicantUuId="+applicantUuId,
+            url : "/hipaa/request-records?userName="+userName+"&password="+password+"&applicantUuId="+applicantUuId +
+                    "&patientAddress.address1=" + address1.value + "&patientAddress.address2=" + address1.value +
+                    "&patientAddress.state=" + state.value + "&patientAddress.city=" + city.value + "&patientAddress.zip=" + zip.value +
+                    "&patientBirthdate.month=" + month.value + "&patientBirthdate.day=" + day.value + "&patientBirthdate.year=" + year.value +
+                    "&patientName.lastName=" + last.value + "&patientName.middleName=" + middle.value + "&patientName.firstName=" + first.value +
+                    "&requestType=" + requestType.value + "&custodianUuId=" + custodianUuId.value,
             success : function(contract) {
                 if (contract) {
-                    window.location.replace("/hipaa/custodian/account.html?applicantUuId="+applicantUuId);
+                    window.location.replace("/hipaa/custodian/login.html");
                 } else {
                     alert("Failed to update contract - Check User and Password");
                 }
@@ -159,5 +205,6 @@
             }
          });
      }
+   }
 </script>
 </html>

@@ -19,6 +19,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Private blockchain API
@@ -534,7 +535,7 @@ public class BlockchainController {
 
 	/* HIPAA Rules */
 	@PostMapping("/hipaa/request-records")
-	public HipaaContract requestRecords(String userName, String password, String applicantUuId, HipaaApplication application, String custodianUuId) throws JsonProcessingException {
+	public Contract requestRecords(String userName, String password, String applicantUuId, SubjectRequest application, String custodianUuId) throws JsonProcessingException {
 		// Find applicant
 		Applicant applicant = Rest.get("http://localhost:8080/applicant/find",Applicant.class,"uuid",applicantUuId);
 		if (applicant == null) return null;
@@ -546,11 +547,13 @@ public class BlockchainController {
 		// record applicant and custodian record in verfications
 		verifications.addTransaction(applicant.getUuid(),custodian.getUuid(), applicant);
 		verifications.addTransaction(applicant.getUuid(),custodian.getUuid(), custodian);
-		HipaaContract contract = HipaaContract.builder()
+		Contract contract = Contract.builder()
 				.applicantId(applicantUuId)
-				.currentStatus(HipaaContract.RECORD_REQUEST)
+				.contractId(UUID.randomUUID().toString())
+				.currentStatus(Contract.RECORD_REQUEST)
 				.owner(Contract.CUSTODIAN)
 				.lastVerification(verificationRecord().getIndex())
+				.application(application)
 				.build();
 		// update contract from copy (modifying contract will change the block and invalidate the chain)
 

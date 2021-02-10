@@ -42,7 +42,7 @@
 <div class="h2 container text-darkblue">Welcome <span id="firstName"></span>, </div>
 <br>
 <div class="container">
-    <div class="h3 container text-teal">What would you like to do today?:</div>
+    <div class="h3 container text-teal">Here are your work items:</div>
 
     <div class="wrapper fadeInDown">
         <div class="container-fluid">
@@ -65,13 +65,13 @@
    $(document).ready(function() {
      var url_string = window.location.href;
      var url = new URL(url_string);
-     applicantId = url.searchParams.get("applicantUuId");
-     renderContractsByOwner("applicant","applicantUuId",applicantId);
-     $.getJSON("/applicant/find?uuid=" + applicantId, function(value){
+     custodianId = url.searchParams.get("custodianUuId");
+     renderContractsByOwner("custodian","custodianUuId",custodianId);
+     $.getJSON("/custodian/find?uuid=" + custodianId, function(value){
         if (!value) {
             alert("Applicant not found");
         } else {
-            $("#firstName").append(value.name.firstName);
+            $("#firstName").append(value.name);
         }
      });
    });

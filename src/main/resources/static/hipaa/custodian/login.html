@@ -57,12 +57,12 @@ function validate() {
                 } else {
                     $.ajax({
                         type: "GET",
-                        url : "/applicant/find?validationId="+data,
+                        url : "/custodian/find?validationId="+data,
                         success : function(value) {
                             if (!value) {
                                 $("#error").append("Invalid username or password");
                             } else {
-                                window.location.replace("/hipaa/applicant/records-request.html?applicantUuId="+value.uuid);
+                                window.location.replace("/hipaa/custodian/account.html?custodianUuId="+value.uuid);
                             }
                         },
                         error : function(data) {
