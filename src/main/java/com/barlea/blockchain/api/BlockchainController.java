@@ -532,5 +532,34 @@ public class BlockchainController {
 		return ChainResponse.builder().chain(communal.getChain()).length(communal.getChain().size()).build();
 	}
 
+	/* HIPAA Rules */
+	@PostMapping("/hipaa/request-records")
+	public HipaaContract requestRecords(String userName, String password, String applicantUuId, HipaaApplication application, String custodianUuId) throws JsonProcessingException {
+		// Find applicant
+		Applicant applicant = Rest.get("http://localhost:8080/applicant/find",Applicant.class,"uuid",applicantUuId);
+		if (applicant == null) return null;
+		// Validate applicant
+		String applicantId = Hasher.hash(Credentials.builder().userName(userName).password(password).build().toString());
+		if (!applicantId.equals(applicant.getValidationId())) return null;
+		Custodian custodian = Rest.get("http://localhost:8080/custodian/find",Custodian.class,"uuid",custodianUuId);
+		if (custodian == null) return null;
+		// record applicant and custodian record in verfications
+		verifications.addTransaction(applicant.getUuid(),custodian.getUuid(), applicant);
+		verifications.addTransaction(applicant.getUuid(),custodian.getUuid(), custodian);
+		HipaaContract contract = HipaaContract.builder()
+				.applicantId(applicantUuId)
+				.currentStatus(HipaaContract.RECORD_REQUEST)
+				.owner(Contract.CUSTODIAN)
+				.lastVerification(verificationRecord().getIndex())
+				.build();
+		// update contract from copy (modifying contract will change the block and invalidate the chain)
+
+		// add contract transaction to requests
+		requests.addTransaction(applicant.getUuid(), custodian.getUuid(),contract);
+		// update the registry that there is a new or updated contract
+		updateRegister(applicant.getUuid(),custodian.getUuid(),contract.getContractId(),requestRecord().getIndex());
+		return contract;
+	}
+
 
 }

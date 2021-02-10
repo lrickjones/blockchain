@@ -18,7 +18,7 @@ import java.util.UUID;
  * @author L Rick Jones
  */
 @RestController
-public class InitializeHippa implements ApplicationListener<ApplicationStartedEvent> {
+public class InitializeHippa {
 
     static private String generateValidationFromCredentials(String userName, String password) {
         Credentials creds = Credentials.builder().userName(userName).password(password).build();
@@ -30,17 +30,17 @@ public class InitializeHippa implements ApplicationListener<ApplicationStartedEv
     }
 
     @GetMapping("/hipaa/init")
-    public void onApplicationEvent(@NotNull ApplicationStartedEvent event) {
+    public void hipaaInit(){
 
         Rest.get("http://localhost:8080/blockchain/reset",Void.class);
 
         /*Applicant applicant =*/ Rest.post("http://localhost:8080/applicant/add",Applicant.class,
-                "requestType","test",
-                "validationId",generateValidationFromCredentials("dfrench","dfPass123"),
-                "firstName","D",
+                "requestType","records",
+                "validationId",generateValidationFromCredentials("galli","igPass123"),
+                "firstName","Intinge",
                 "middleName","",
-                "lastName","French",
-                "organization", "InsCo");
+                "lastName","Galli",
+                "organization", "InsQuery");
 
         Arbiter arbiter = Rest.post("http://localhost:8080/arbiter/add",Arbiter.class,
                 "jurisdiction", "self",
@@ -50,8 +50,8 @@ public class InitializeHippa implements ApplicationListener<ApplicationStartedEv
                 "lastName","Buck");
 
         Custodian custodian = Rest.post("http://localhost:8080/custodian/add",Custodian.class,
-                "name","HealthCo",
-                "validationId", generateValidationFromCredentials("healthco","hcPass123"),
+                "name","HealthClinic",
+                "validationId", generateValidationFromCredentials("healthclinic","hcPass123"),
                 "address1","123 This Place",
                 "state","NW",
                 "city","Erehwon",

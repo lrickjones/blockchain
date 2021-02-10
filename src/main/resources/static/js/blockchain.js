@@ -235,3 +235,20 @@
                }
           });
    }
+
+       function renderCustodianList() {
+         $.getJSON("/custodian/list", function(result){
+             $.each(result, function(key,value) {
+                   renderCustodian(value);
+               });
+          });
+       }
+
+      function renderCustodian(record) {
+         var div = "<div class='container-fluid w-100 p-1 rounded bg-darkblue mb-4' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
+         div += "<div class='row px-2'>"
+         div += "<div class='col-9 text-left text-barlea'>";
+         div += "<div id='" + record.uuid + "'>" + record.name + "</div>";
+         div += "</div></div>";
+         $("#custodians").append(div);
+      }

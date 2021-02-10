@@ -14,7 +14,7 @@
 
         <!-- Icon -->
         <div class="fadeIn first">
-            <img src="/img/circle-logo.png" id="icon" alt="User Icon" style="width:240px;height:240px;"/>
+            <img src="/img/insquery.png" id="icon" alt="User Icon" style="width:240px;height:240px;"/>
         </div>
 
         <!-- Login Form -->
@@ -42,7 +42,7 @@
 <script>
 
    $(document).ready(function() {
-      $.getJSON("/exceptional-access/init");
+      $.getJSON("/hipaa/init");
    });
 
 function validate() {
@@ -68,7 +68,7 @@ function validate() {
                             if (!value) {
                                 $("#error").append("Invalid username or password");
                             } else {
-                                window.location.replace("/applicant/account.html?applicantUuId="+value.uuid);
+                                window.location.replace("/hipaa/applicant/records-request.html?applicantUuId="+value.uuid);
                             }
                         },
                         error : function(data) {

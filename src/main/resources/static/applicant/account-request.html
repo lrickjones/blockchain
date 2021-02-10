@@ -167,7 +167,7 @@
      var authPassword = document.getElementById("authPassword").value;
          $.ajax({
             type : "POST",
-            url : "/contract/account-request?&contractId=" + contractId +"&userName="+userName+"&password="+password+"&applicantUuId="+applicantUuId+"&authName="+authName+"&authPassword="+authPassword,
+            url : "/contract/account-request?contractId=" + contractId +"&userName="+userName+"&password="+password+"&applicantUuId="+applicantUuId+"&authName="+authName+"&authPassword="+authPassword,
             success : function(contract) {
                 if (contract) {
                     window.location.replace("/applicant/account.html?applicantUuId="+applicantUuId);

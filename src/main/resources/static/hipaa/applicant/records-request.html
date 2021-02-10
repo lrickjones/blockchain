@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<head>
+    <meta charset = "ISO-8859-1" />
+    <link href = "/css/styles.css" rel = "stylesheet"/>
+    <title>Applicant Account Request</title>
+</head>
+<body>
+<nav id="navbar" class="navbar navbar-expand-lg navbar-light">
+    <a class="navbar-brand" href="/"><img src="/img/barlea.png" style="width:80px;height:100px;" alt="BARLEA Logo"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/contract/contracts.html">Contracts</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/hipaa/applicant/login.html"><b>Applicant</b></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/hipaa/arbiter/login.html">Arbiter</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/hipaa/custodian/login.html">Custodian</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+</nav>
+<br>
+<div class="container">
+    <div class="container-fluid row justify-content-center h2 w-100 text-darkblue">Request Medical Records for Individual</div>
+    <div class="container-fluid row w-100" style="height:100vh">
+        <div class="container-fluid col border border-secondary rounded overflow-auto h-75 bg-teal p-4">
+            <div id="authorityType"></div>
+            <div id="description"></div>
+            <label class="h4 text-barlea">Subject's Name</label>
+            <div class="row justify-content-center">
+                <input type="text" id="name.firstName" class="container col border border-secondary rounded" name="name.firstName" placeholder="First Name">
+                <input type="text" id="name.middleName" class="container col border border-secondary rounded" name="name.middleName" placeholder="Middle Name">
+                <input type="text" id="name.lastName" class="container col border border-secondary rounded" name="name.lastName" placeholder="Last Name">
+            </div >
+            <label class="h4 text-barlea">Subject's Address</label>
+            <input type="text" id="homeDomicile.address1" class="container col border border-secondary rounded" name="homeDomicile.address1" placeholder="Address 1">
+            <input type="text" id="homeDomicile.address2" class="container col border border-secondary rounded" placeholder="Address 2">
+            <div class="container row">
+                <input type="text" id="homeDomicile.state" class="container col border border-secondary rounded" name="homeDomicile.state" placeholder="State">
+                <input type="text" id="homeDomicile.city" class="container col border border-secondary rounded" name="homeDomicile.city" placeholder="City">
+                <input type="text" id="homeDomicile.zip" class="container col border border-secondary rounded" name="homeDomicile.zip" placeholder="ZIP Code">
+            </div>
+            <label class="h4 text-barlea">Subject's Phone Numbers</label>
+            <input type="text" id="homePhone" class="container col border border-secondary rounded" name="homePhone" placeholder="Home Phone">
+            <input type="text" id="workPhone" class="container col border border-secondary rounded" name="workPhone" placeholder="Work Phone">
+            <label class="h4 text-barlea">Subject's Date of Birth</label>
+            <div class="container row">
+                <input type="text" id="birthdate.month" class="container col border border-secondary rounded" name="month" placeholder="Birth Month">
+                <input type="text" id="birthdate.day" class="container col border border-secondary rounded" name="day" placeholder="Birth Day">
+                <input type="text" id="birthdate.year" class="container col border border-secondary rounded" name="year" placeholder="Birth Year">
+            </div >
+        </div>
+        <div class="container-fluid col">
+            <div class ="row"><span id="custodians"></span></div>
+            <div class="wrapper fadeInDown">
+                <div id="formContent">
+                    <!-- Tabs Titles -->
+                    <div class="h3 container fadeIn first text-barlea">Send Request</div>
+                    <!-- Login Form -->
+                    <div id="error" class="text-danger"></div>
+                    <div class="input-group justify-content-center">
+                        <div class="input-group-prepend my-2">
+                            <button type="button" class="btn bg-darkblue text-lightblue">Select</button>
+                            <button type="button" class="btn dropdown-toggle bg-darkblue text-lightblue dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" onclick="updateStatus('immunization records')">Immunization Records</a>
+                                <a class="dropdown-item" onclick="updateStatus('primary physician')">Primary Physician</a>
+                                <a class="dropdown-item" onclick="updateStatus('health history')">Health History</a>
+                            </div>
+                        </div>
+                        <input type="text" id="status" class="fadeIn third hidden" style="width:62%;" name="status" placeholder="Request Type">
+                    </div>
+                    <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
+                    <input type="password" id="password" class="fadeIn second hidden" name="password" placeholder="password">
+                    <input  type="button" class="fadeIn fourth" onclick="validate()" value="Submit Request">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script src="/js/blockchain.js"></script>
+
+<script>
+   $(document).ready(function() {
+
+        document.getElementById("name.firstName").value = "Juanita";
+        document.getElementById("name.middleName").value = "T";
+        document.getElementById("name.lastName").value = "Buck";
+
+        document.getElementById("homeDomicile.address1").value = "123 Test Ave";
+        document.getElementById("homeDomicile.address2").value = "";
+        document.getElementById("homeDomicile.state").value = "BD";
+        document.getElementById("homeDomicile.city").value = "Teston";
+        document.getElementById("homeDomicile.zip").value = "12345";
+
+        document.getElementById("homePhone").value = "(555) 555-5555";
+        document.getElementById("workPhone").value = "";
+
+        document.getElementById("birthdate.month").value = "June";
+        document.getElementById("birthdate.day").value = "15";
+        document.getElementById("birthdate.year").value = "1972";
+
+        renderCustodianList();
+
+   });
+
+   function updateStatus(newStatus) {
+     var status = document.getElementById("status");
+     status.value = newStatus;
+   }
+
+   function validate() {
+     var url_string = window.location.href;
+     var url = new URL(url_string);
+     var applicantUuId = url.searchParams.get("applicantUuId");
+     var userName = document.getElementById("userName").value;
+     var password = document.getElementById("password").value;
+         $.ajax({
+            type : "POST",
+            url : "/contract/record-request?userName="+userName+"&password="+password+"&applicantUuId="+applicantUuId,
+            success : function(contract) {
+                if (contract) {
+                    window.location.replace("/hipaa/custodian/account.html?applicantUuId="+applicantUuId);
+                } else {
+                    alert("Failed to update contract - Check User and Password");
+                }
+            },
+            error : function(xhr) {
+                alert(xhr.status);
+            }
+         });
+     }
+</script>
+</html>
