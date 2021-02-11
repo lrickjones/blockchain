@@ -23,11 +23,12 @@ public class ApplicantRegistry {
     @PostMapping("/applicant/add")
     public Applicant addApplicant(@RequestParam String validationId,
                             @RequestParam String requestType,
-                            Name personalInfo) {
+                            Name personalInfo, String organization) {
         Applicant applicant = Applicant.builder()
                 .requestType(requestType)
                 .validationId(validationId)
                 .name(personalInfo)
+                .organization(organization)
                 .build();
         applicantList.add(applicant);
         return applicant;

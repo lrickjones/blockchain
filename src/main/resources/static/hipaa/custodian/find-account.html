@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<head>
+    <meta charset = "ISO-8859-1" />
+    <link href = "/css/styles.css" rel = "stylesheet"/>
+    <title>Custodian Get Account Info</title>
+</head>
+<body>
+<nav id="navbar" class="navbar navbar-expand-lg navbar-light">
+    <a class="navbar-brand" href="/"><img src="/img/barlea.png" style="width:80px;height:100px;" alt="BARLEA Logo"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/hipaa/contract/contracts.html">Contracts</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/hipaa/applicant/login.html">Applicant</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/hipaa/arbiter/login.html">Arbiter</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/hipaa/custodian/login.html"><b>Custodian</b></a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+</nav>
+<br>
+<div class="container">
+    <div class="container-fluid row justify-content-center h2 w-100 text-darkblue">Record Request</div>
+    <div class="container-fluid row w-100" style="height:100vh">
+        <div class="container-fluid col border border-secondary rounded overflow-auto h-75 bg-teal p-4">
+            <div id="authorityType"></div>
+            <div id="description"></div>
+            <div class="m-2">
+                <span class="text-barlea">Request Type: </span><span id="requestType"></span>
+            </div>
+            <div class="m-2">
+                <span class="text-barlea">Request Purpose: </span><span id="requestPurpose"></span>
+            </div>
+            <div class="m-2">
+                <span class="text-barlea">Authorization Status: </span><span id="authorizationStatus"></span>
+            </div>
+            <label class="h5 text-barlea">Subject's Name</label>
+            <div class="row justify-content-center">
+                <input type="text" id="name.firstName" class="container col border border-secondary rounded" name="name.firstName" placeholder="First Name">
+                <input type="text" id="name.middleName" class="container col border border-secondary rounded" name="name.middleName" placeholder="Middle Name">
+                <input type="text" id="name.lastName" class="container col border border-secondary rounded" name="name.lastName" placeholder="Last Name">
+            </div >
+            <label class="h5 text-barlea">Subject's Address</label>
+            <input type="text" id="homeDomicile.address1" class="container col border border-secondary rounded" name="homeDomicile.address1" placeholder="Address 1">
+            <input type="text" id="homeDomicile.address2" class="container col border border-secondary rounded" placeholder="Address 2">
+            <div class="container row">
+                <input type="text" id="homeDomicile.state" class="container col border border-secondary rounded" name="homeDomicile.state" placeholder="State">
+                <input type="text" id="homeDomicile.city" class="container col border border-secondary rounded" name="homeDomicile.city" placeholder="City">
+                <input type="text" id="homeDomicile.zip" class="container col border border-secondary rounded" name="homeDomicile.zip" placeholder="ZIP Code">
+            </div>
+            <label class="h5 text-barlea">Subject's Date of Birth</label>
+            <div class="container row">
+                <input type="text" id="month" class="container col border border-secondary rounded" name="month" placeholder="Birth Month">
+                <input type="text" id="day" class="container col border border-secondary rounded" name="day" placeholder="Birth Day">
+                <input type="text" id="year" class="container col border border-secondary rounded" name="year" placeholder="Birth Year">
+            </div >
+        </div>
+        <div class="container-fluid col">
+            <div class="fadeInDown">
+                <div id="formContent">
+                    <!-- Tabs Titles -->
+                    <div class="h3 container fadeIn first text-barlea">Lookup Status</div>
+                    <!-- Login Form -->
+                    <div id="error" class="text-danger"></div>
+                    <div class="input-group justify-content-center">
+                        <div class="input-group-prepend my-2">
+                            <button type="button" class="btn bg-darkblue text-lightblue">Select</button>
+                            <button type="button" class="btn dropdown-toggle bg-darkblue text-lightblue dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" onclick="updateStatus('access authorized')">Send Record Token</a>
+                                <a class="dropdown-item" onclick="updateStatus('request authorization')">Request Authorization</a>
+                                <a class="dropdown-item" onclick="updateStatus('deny request')">Deny Request</a>
+                                <a class="dropdown-item" onclick="updateStatus('record not found')">Record Not Found</a>
+                            </div>
+                        </div>
+                        <input type="text" id="status" class="fadeIn third hidden" style="width:62%;" name="status" placeholder="search result">
+                    </div>
+                    <input type="text" id="token" class="fadeIn third hidden" name="token" placeholder="account token">
+                    <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
+                    <input type="password" id="password" class="fadeIn second hidden" name="password" placeholder="password">
+                    <input  type="button" class="fadeIn fourth" onclick="validate()" value="Submit Request">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script>
+   $(document).ready(function() {
+     var url_string = window.location.href;
+     var url = new URL(url_string);
+     var contractId = url.searchParams.get("contractId");
+     var custodianUuId = url.searchParams.get("custodianUuId");
+     if (contractId) {
+          $.getJSON("/contract/find?contractId=" + contractId, function(contract){
+                if (contract.application) {
+                    $("#requestType").append(contract.application.requestType);
+                    $("#requestPurpose").append(contract.application.requestPurpose);
+                    if (contract.application.patientName) {
+                        document.getElementById("name.firstName").value = contract.application.patientName.firstName;
+                        document.getElementById("name.middleName").value = contract.application.patientName.middleName;
+                        document.getElementById("name.lastName").value = contract.application.patientName.lastName;
+                    }
+                    if (contract.application.patientAddress) {
+                        document.getElementById("homeDomicile.address1").value = contract.application.patientAddress.address1;
+                        document.getElementById("homeDomicile.address2").value = contract.application.patientAddress.address2;
+                        document.getElementById("homeDomicile.state").value = contract.application.patientAddress.state;
+                        document.getElementById("homeDomicile.city").value = contract.application.patientAddress.city;
+                        document.getElementById("homeDomicile.zip").value = contract.application.patientAddress.zip;
+                    }
+                    if (contract.application.patientBirthdate) {
+                        document.getElementById("month").value = contract.application.patientBirthdate.month;
+                        document.getElementById("day").value = contract.application.patientBirthdate.day;
+                        document.getElementById("year").value = contract.application.patientBirthdate.year;
+                    }
+                }
+          });
+     }
+   });
+
+   function updateStatus(newStatus) {
+     var status = document.getElementById("status");
+     status.value = newStatus;
+   }
+
+   function validate() {
+     var url_string = window.location.href;
+     var url = new URL(url_string);
+     var contractId = url.searchParams.get("contractId");
+     var custodianUuId = url.searchParams.get("custodianUuId");
+     var userName = document.getElementById("userName").value;
+     var password = document.getElementById("password").value;
+     var status = document.getElementById("status").value;
+     var token = document.getElementById("token").value;
+         $.ajax({
+            type : "POST",
+            url : "/contract/get-account-info?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password+"&status="+status+"&token="+token,
+            success : function(data) {
+                if (!data) {
+                    alert("Submission Failed - Check Username and Password");
+                } else {
+                    window.location.replace("/custodian/account.html?custodianUuId="+custodianUuId);
+                }
+            },
+            error : function(xhr) {
+                alert(xhr.statusText);
+            }
+         });
+     }
+</script>
+</html>

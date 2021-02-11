@@ -70,7 +70,7 @@
             </div >
         </div>
         <div class="container-fluid col">
-            <div class="wrapper fadeInDown">
+            <div class="fadeInDown">
                 <div id="formContent">
                     <!-- Tabs Titles -->
                     <div class="h3 container fadeIn first text-barlea">Send Request</div>
@@ -87,6 +87,9 @@
                         </div>
                         <input type="text" id="custodian" class="fadeIn second hidden" style="width:62%;" name="custodian" placeholder="Data Provider">
                         <input type="hidden" id="custodianId" class="fadeIn second hidden" style="width:62%;" name="custodianId">
+                    </div>
+                    <div class="container px-4 py-2">
+                        <textarea  id="purpose" rows="2" class="fadeIn second w-100" placeholder="Purpose for Request"></textarea>
                     </div>
                     <div class="input-group justify-content-center">
                         <div class="input-group-prepend my-2">
@@ -182,6 +185,8 @@
      var requestType = document.getElementById("status");
      var custodianUuId = document.getElementById("custodianId");
 
+     var purpose = document.getElementById("purpose");
+
      if (!requestType || !custodianUuId) {
         alert("Check request type and data provider fields");
      } else {
@@ -192,7 +197,7 @@
                     "&patientAddress.state=" + state.value + "&patientAddress.city=" + city.value + "&patientAddress.zip=" + zip.value +
                     "&patientBirthdate.month=" + month.value + "&patientBirthdate.day=" + day.value + "&patientBirthdate.year=" + year.value +
                     "&patientName.lastName=" + last.value + "&patientName.middleName=" + middle.value + "&patientName.firstName=" + first.value +
-                    "&requestType=" + requestType.value + "&custodianUuId=" + custodianUuId.value,
+                    "&requestType=" + requestType.value + "&custodianUuId=" + custodianUuId.value +"&requestPurpose=" + purpose.value,
             success : function(contract) {
                 if (contract) {
                     window.location.replace("/hipaa/custodian/login.html");

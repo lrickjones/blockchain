@@ -4,12 +4,12 @@
 
 <head>
     <meta charset = "ISO-8859-1" />
-    <link href = "/css/styles.css" rel = "stylesheet"/>
-    <title>Active Contracts</title>
+    <link href = "../css/styles.css" rel = "stylesheet"/>
+    <title>Contract History</title>
 </head>
 <body>
 <nav id="navbar" class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" href="/"><img src="/img/barlea.png" style="width:80px;height:100px;" alt="BARLEA Logo"></a>
+    <a class="navbar-brand" href="/"><img src="../img/barlea.png" style="width:80px;height:100px;" alt="BARLEA Logo"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -39,15 +39,15 @@
     </div>
 </nav>
 
-<div class="h2 container text-darkblue">Active Contracts </div>
+<div class="h2 container text-darkblue">Contract History for <span id="contract-number"></span> </div>
 <br>
 <div class="container">
 
     <div class="wrapper fadeInDown">
-        <div class="container-fluid overflow-auto" style="height:75vh;">
+        <div class="container-fluid overflow-auto"  style="height:75vh;">
             <div id="contracts"></div>
         </div>
-        <div class="container-fluid row">
+        <div class="row">
             <div class="col" id="register"></div>
             <div class="col" id="request"></div>
             <div class="col" id="verification"></div>
@@ -56,9 +56,6 @@
 
 </div>
 </body>
-<footer>
-    <!--div>Monkey icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div-->
-</footer>
 <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -70,28 +67,11 @@
 <script>
 
    $(document).ready(function() {
-     renderAllContracts("","/hipaa");
-       $.getJSON("/register/validate", function(result){
-            if (result) {
-                $("#register").append("<input type='checkbox' checked on-click='return false'> Register Chain Valid");
-            } else {
-                $("#register").append("<span class='text-danger'>Register Chain Invalid!</span>");
-            }
-       });
-       $.getJSON("/request/validate", function(result){
-            if (result) {
-                $("#request").append("<input type='checkbox' checked on-click='return false'> Request Chain Valid");
-            } else {
-                $("#request").append("<span class='text-danger'>Request Chain Invalid!</span>");
-            }
-       });
-       $.getJSON("/verification/validate", function(result){
-            if (result) {
-                $("#verification").append("<input type='checkbox' checked on-click='return false'> Verification Chain Valid");
-            } else {
-                $("#verification").append("<span class='text-danger'>Verification Chain Invalid!</span>");
-            }
-       });
+        var url_string = window.location.href;
+        var url = new URL(url_string);
+        var contractId = url.searchParams.get("contractId");
+        $("#contract-number").append(contractId);
+        renderContractHistory(contractId);
    });
 
 </script>

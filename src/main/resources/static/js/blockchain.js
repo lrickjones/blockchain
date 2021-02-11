@@ -97,7 +97,7 @@
       var url = "";
       var instructions = "";
       if (!paramName) {
-        url = "/contract/history.html?contractId=" + contract.contractId;
+        url = paramValue + "/contract/history.html?contractId=" + contract.contractId;
       } else {
           if (contract.currentStatus.localeCompare("account request") == 0) {
             url = "/applicant/account-request.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
@@ -132,6 +132,9 @@
       getApplicant(contract.applicantId);
       if (applicant) {
         div += "<b>Applicant: </b> " + applicant.name.lastName + ", " + applicant.name.firstName;
+        if (applicant.organization) {
+            div += " - on behalf of " + applicant.organization;
+        }
       }
       div += "</div>";
 
@@ -143,6 +146,7 @@
         if (contract.application) {
           div += "<div><b>Subject: </b> " + contract.application.patientName.lastName + ", " + contract.application.patientName.firstName + "</div>";
           div += "<div><b>Request: </b> " + contract.application.requestType + "</div>";
+          div += "<div><b>Reason: </b>" + contract.application.requestPurpose + "</div>";
         }
       if (authority) {
         custodian = "";

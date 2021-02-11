@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 public class SubjectRequest {
     private String requestType;
 
+    private String requestPurpose;
+
     private Name patientName;
 
     private Address patientAddress;
