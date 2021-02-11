@@ -43,16 +43,16 @@
     <div class="container-fluid row justify-content-center h2 w-100 text-darkblue">Record Request</div>
     <div class="container-fluid row w-100" style="height:100vh">
         <div class="container-fluid col border border-secondary rounded overflow-auto h-75 bg-teal p-4">
-            <div id="authorityType"></div>
-            <div id="description"></div>
-            <div class="m-2">
-                <span class="text-barlea">Request Type: </span><span id="requestType"></span>
-            </div>
-            <div class="m-2">
-                <span class="text-barlea">Request Purpose: </span><span id="requestPurpose"></span>
-            </div>
-            <div class="m-2">
-                <span class="text-barlea">Authorization Status: </span><span id="authorizationStatus"></span>
+            <div class="container border border-primary rounded">
+                <div class="m-2">
+                    <span class="text-barlea">Request Type: </span><span id="requestType"></span>
+                </div>
+                <div class="m-2">
+                    <span class="text-barlea">Request Purpose: </span><span id="requestPurpose"></span>
+                </div>
+                <div class="m-2">
+                    <span class="text-barlea">Applicant: </span><span id="applicant"></span>
+                </div>
             </div>
             <label class="h5 text-barlea">Subject's Name</label>
             <div class="row justify-content-center">
@@ -79,25 +79,22 @@
             <div class="fadeInDown">
                 <div id="formContent">
                     <!-- Tabs Titles -->
-                    <div class="h3 container fadeIn first text-barlea">Lookup Status</div>
+                    <div class="h3 container fadeIn first text-barlea">Applicant Search</div>
                     <!-- Login Form -->
                     <div id="error" class="text-danger"></div>
                     <div class="input-group justify-content-center">
                         <div class="input-group-prepend my-2">
-                            <button type="button" class="btn bg-darkblue text-lightblue">Select</button>
+                            <button type="button" class="btn bg-darkblue text-lightblue">Action</button>
                             <button type="button" class="btn dropdown-toggle bg-darkblue text-lightblue dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" onclick="updateStatus('access authorized')">Send Record Token</a>
-                                <a class="dropdown-item" onclick="updateStatus('request authorization')">Request Authorization</a>
+                                <a class="dropdown-item" onclick="updateStatus('search for record')">Search for Record</a>
                                 <a class="dropdown-item" onclick="updateStatus('deny request')">Deny Request</a>
-                                <a class="dropdown-item" onclick="updateStatus('record not found')">Record Not Found</a>
                             </div>
                         </div>
-                        <input type="text" id="status" class="fadeIn third hidden" style="width:62%;" name="status" placeholder="search result">
+                        <input type="text" id="status" class="fadeIn third hidden" style="width:62%;" name="status" placeholder="Request Type">
                     </div>
-                    <input type="text" id="token" class="fadeIn third hidden" name="token" placeholder="account token">
                     <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
                     <input type="password" id="password" class="fadeIn second hidden" name="password" placeholder="password">
                     <input  type="button" class="fadeIn fourth" onclick="validate()" value="Submit Request">
@@ -122,6 +119,9 @@
      var custodianUuId = url.searchParams.get("custodianUuId");
      if (contractId) {
           $.getJSON("/contract/find?contractId=" + contractId, function(contract){
+                $.getJSON("/applicant/find?uuid=" + contract.applicantId, function(applicant) {
+                    $("#applicant").append(applicant.organization);
+                });
                 if (contract.application) {
                     $("#requestType").append(contract.application.requestType);
                     $("#requestPurpose").append(contract.application.requestPurpose);
