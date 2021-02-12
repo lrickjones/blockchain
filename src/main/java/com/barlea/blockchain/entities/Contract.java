@@ -30,6 +30,7 @@ public class Contract extends Entity {
     static public final String RECORD_REQUEST = "record request";
     static public final String RECORD_FOUND = "record found";
     static public final String RECORD_NOT_FOUND = "record not authorized";
+    static public final String REQUEST_AUTHORIZATION = "request authorization";
     static public final String APPLICANT_AUTHORIZED = "applicant authorized";
     static public final String APPLICANT_NOT_AUTHORIZED = "applicant not authorized";
     static public final String RECORD_DELIVERED = "record delivered";

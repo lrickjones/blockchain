@@ -54,7 +54,7 @@
                     <span class="text-barlea">Applicant: </span><span id="applicant"></span>
                 </div>
             </div>
-            <div class="container border border-secondary bg-secondary">
+            <div class="container border border-secondary">
                 <label class="h5 text-barlea">Requested Record</label>
                 <div class="row container">
                     <div class="m-2">
@@ -78,6 +78,7 @@
             </div>
             <div class="container border border-success rounded bg-primary">
                 <label class="h5 text-success">Record Found</label>
+                <span class="text-warning py-4"> Authorized: </span><span id="authorized"></span>
                 <div class="container row">
                     <div class="m-2">
                         <span class="h6" id="foundName"></span>
@@ -122,6 +123,7 @@
                     </div>
                     <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
                     <input type="password" id="password" class="fadeIn second hidden" name="password" placeholder="password">
+                    <input type="hidden" id="arbiterUuId">
                     <input  type="button" class="fadeIn fourth" onclick="validate()" value="Submit Request">
                 </div>
             </div>
@@ -168,6 +170,7 @@
                         }
                     }
                     if (patient) {
+                        document.getElementById("arbiterUuId").value = patient.uuid;
                         if (patient.name) {
                             $("#foundName").append(patient.name.lastName + ", " + patient.name.firstName + " " + patient.name.middleName);
                         }
@@ -179,6 +182,10 @@
                         if (patient.birthdate) {
                             $("#foundBirthdate").append(patient.birthdate.month + "/" + patient.birthdate.day + "/" + patient.birthdate.year);
                         }
+                        $.getJSON("/patient/authorizes?applicantUuId=" + contract.applicantId + "&requestType=" + contract.application.requestType + "&organization=" + contract.application.organization, function(result) {
+                            var isAuthorized = result?"Yes":"No";
+                            $("#authorized").append(isAuthorized);
+                        });
                     }
                 });
           });
@@ -198,17 +205,31 @@
      var userName = document.getElementById("userName").value;
      var password = document.getElementById("password").value;
      var status = document.getElementById("status").value;
-     if (status.localeCompare("search for record") == 0) {
-        window.location.replace("/hipaa/custodian/record-lookup.html?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password);
-     } else {
-         $.ajax({
+     var arbiterUuId = document.getElementById("arbiterUuId").value;
+     if (status.localeCompare("record not found") == 0) {
+           $.ajax({
             type : "POST",
-            url : "/applicant/request-denied?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password,
+            url : "/hipaa/record_not_found?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password,
             success : function(data) {
                 if (!data) {
                     alert("Submission Failed - Check Username and Password");
                 } else {
-                    window.location.replace("/applicant/account.html?contractId="+contractId);
+                    window.location.replace("/hipaa/applicant/login.html");
+                }
+            },
+            error : function(xhr) {
+                alert(xhr.statusText);
+            }
+         });
+     } else {
+         $.ajax({
+            type : "POST",
+            url : "/hipaa/request-authorization?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password + "&arbiterUuId=" + arbiterUuId,
+            success : function(data) {
+                if (!data) {
+                    alert("Submission Failed - Check Username and Password");
+                } else {
+                    window.location.replace("/hipaa/arbiter/login.html");
                 }
             },
             error : function(xhr) {

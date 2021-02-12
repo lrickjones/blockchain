@@ -4,26 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <link href = "/css/styles.css" rel = "stylesheet"/>
-    <title>Arbiter Login</title>
+    <title>BARLEA Demo</title>
 </head>
 <body>
 
 <div class="wrapper fadeInDown">
-    <div id="formContent">
+    <div id="formContent" class="pt-4">
         <!-- Tabs Titles -->
 
         <!-- Icon -->
         <div class="fadeIn first">
-            <img src="/img/scale.png" id="icon" alt="User Icon" style="width:240px;height:240px;"/>
+            <img src="/img/healthclinic.png" id="icon" alt="User Icon" style="width:240px;height:240px;"/>
         </div>
 
         <!-- Login Form -->
         <div id="error" class="text-danger"></div>
+        <div id="status" class="text-teal"></div>
         <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
         <input type="password" id="password" class="fadeIn third hidden" name="password" placeholder="password">
         <input  type="button" class="fadeIn fourth" onclick="validate()" value="Log In">
 
-        <!-- Remind Passowrd -->
+        <!-- Remind Password -->
         <div id="formFooter">
             <a class="underlineHover" href="#">Forgot Password?</a>
         </div>
@@ -39,9 +40,8 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 <script>
+
 function validate() {
-    var url_string = window.location.href;
-    var url = new URL(url_string);
     var userName = document.getElementById("userName").value;
     var password = document.getElementById("password").value;
     document.getElementById("error").innerHTML = "";
@@ -57,7 +57,7 @@ function validate() {
                 } else {
                     $.ajax({
                         type: "GET",
-                        url : "/arbiter/find?validationId="+data,
+                        url : "/patient/find?validationId="+data,
                         success : function(value) {
                             if (!value) {
                                 $("#error").append("Invalid username or password");

@@ -534,7 +534,7 @@ public class BlockchainController {
 	}
 
 	/* HIPAA Rules */
-	@PostMapping("/hipaa/request-records")
+	@PostMapping("/hipaa/request-records") // new contract request
 	public Contract requestRecords(String userName, String password, String applicantUuId, SubjectRequest application, String custodianUuId) throws JsonProcessingException {
 		// Find applicant
 		Applicant applicant = Rest.get("http://localhost:8080/applicant/find",Applicant.class,"uuid",applicantUuId);
@@ -564,5 +564,61 @@ public class BlockchainController {
 		return contract;
 	}
 
+	@PostMapping("/hipaa/request-authorization")
+	public Contract requestAuthorization(String custodianUuId, String userName, String password, String contractId, String arbiterUuId) throws JsonProcessingException {
+		// find contract, if active
+		Contract contract = findContract(contractId);
+		if (contract == null) return null;
+		// Validate Custodian
+		Custodian custodian = Rest.get("http://localhost:8080/custodian/find",Custodian.class,"uuid",custodianUuId);
+		if (custodian == null) return null;
+		String validationId = Hasher.hash(Credentials.builder().userName(userName).password(password).build().toString());
+		if (!validationId.equals(custodian.getValidationId())) return null;
+		// Find patient
+		Patient patient = Rest.get("http://localhost:8080/patient/find",Patient.class,"uuid",arbiterUuId);
+		if (patient == null) return null;
+
+		// record applicant and custodian record in verfications
+		verifications.addTransaction(custodian.getUuid(),patient.getUuid(), patient);
+		verifications.addTransaction(custodian.getUuid(),patient.getUuid(), custodian);
+		Contract newContract = contract.toBuilder()
+				.arbiterId(arbiterUuId)
+				.contractId(UUID.randomUUID().toString())
+				.currentStatus(Contract.REQUEST_AUTHORIZATION)
+				.owner(Contract.ARBITER)
+				.lastVerification(verificationRecord().getIndex())
+				.build();
+		// update contract from copy (modifying contract will change the block and invalidate the chain)
+		requests.addTransaction(custodian.getUuid(), patient.getUuid(),newContract);
+		// update the registry that there is a new or updated contract
+		updateRegister(custodian.getUuid(),patient.getUuid(),contract.getContractId(),requestRecord().getIndex());
+		return contract;
+	}
+
+	@PostMapping("/hipaa/record_not_found")
+	public Contract recordNotFound(String custodianUuId, String userName, String password, String contractId) throws JsonProcessingException {
+		// find contract, if active
+		Contract contract = findContract(contractId);
+		if (contract == null) return null;
+		// Validate Custodian
+		Custodian custodian = Rest.get("http://localhost:8080/custodian/find",Custodian.class,"uuid",custodianUuId);
+		if (custodian == null) return null;
+		String validationId = Hasher.hash(Credentials.builder().userName(userName).password(password).build().toString());
+		if (!validationId.equals(custodian.getValidationId())) return null;
+
+		// record applicant and custodian record in verfications
+		verifications.addTransaction(custodian.getUuid(),contract.getApplicantId(), custodian);
+		Contract newContract = contract.toBuilder()
+				.contractId(UUID.randomUUID().toString())
+				.currentStatus(Contract.RECORD_NOT_FOUND)
+				.owner(Contract.APPLICANT)
+				.lastVerification(verificationRecord().getIndex())
+				.build();
+		// update contract from copy (modifying contract will change the block and invalidate the chain)
+		requests.addTransaction(custodian.getUuid(), contract.getApplicantId(),newContract);
+		// update the registry that there is a new or updated contract
+		updateRegister(custodian.getUuid(),contract.getApplicantId(),contract.getContractId(),requestRecord().getIndex());
+		return contract;
+	}
 
 }

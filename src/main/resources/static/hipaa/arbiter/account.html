@@ -5,7 +5,7 @@
 <head>
     <meta charset = "ISO-8859-1" />
     <link href = "/css/styles.css" rel = "stylesheet"/>
-    <title>Contract History</title>
+    <title>Applicant Account Page</title>
 </head>
 <body>
 <nav id="navbar" class="navbar navbar-expand-lg navbar-light">
@@ -20,10 +20,10 @@
                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/hipaa/contract/contracts.html"><b>Contracts</b></a>
+                <a class="nav-link" href="/hipaa/contract/contracts.html">Contracts</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/hipaa/applicant/login.html">Applicant</a>
+                <a class="nav-link" href="/hipaa/applicant/login.html"><b>Applicant</b></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/hipaa/arbiter/login.html">Arbiter</a>
@@ -39,18 +39,14 @@
     </div>
 </nav>
 
-<div class="h2 container text-darkblue">Contract History for <span id="contract-number"></span> </div>
+<div class="h2 container text-darkblue">Welcome <span id="firstName"></span>, </div>
 <br>
 <div class="container">
+    <div class="h3 container text-teal">Here are your work items:</div>
 
     <div class="wrapper fadeInDown">
-        <div class="container-fluid overflow-auto"  style="height:75vh;">
+        <div class="container-fluid">
             <div id="contracts"></div>
-        </div>
-        <div class="row">
-            <div class="col" id="register"></div>
-            <div class="col" id="request"></div>
-            <div class="col" id="verification"></div>
         </div>
     </div>
 
@@ -67,11 +63,17 @@
 <script>
 
    $(document).ready(function() {
-        var url_string = window.location.href;
-        var url = new URL(url_string);
-        var contractId = url.searchParams.get("contractId");
-        $("#contract-number").append(contractId);
-        renderContractHistory(contractId);
+     var url_string = window.location.href;
+     var url = new URL(url_string);
+     custodianId = url.searchParams.get("custodianUuId");
+     renderContractsByOwner("custodian","custodianUuId",custodianId);
+     $.getJSON("/custodian/find?uuid=" + custodianId, function(value){
+        if (!value) {
+            alert("Applicant not found");
+        } else {
+            $("#firstName").append(value.name);
+        }
+     });
    });
 
 </script>
