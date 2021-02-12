@@ -1,11 +1,11 @@
 package com.barlea.blockchain.api;
 
-import com.barlea.blockchain.entities.Arbiter;
-import com.barlea.blockchain.entities.Name;
+import com.barlea.blockchain.entities.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -46,6 +46,11 @@ public class ArbiterRegistry {
             arbiter = arbiterList.stream().filter(o -> o.getValidationId().equals(validationId)).findFirst();
         }
         return arbiter.orElse(null);
+    }
+
+    @GetMapping("/arbiter/clear")
+    public void clearArbiters() {
+        arbiterList.clear();
     }
 }
 

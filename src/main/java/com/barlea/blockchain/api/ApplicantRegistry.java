@@ -49,5 +49,10 @@ public class ApplicantRegistry {
         }
         return warrant.orElse(null);
     }
+
+    @GetMapping("/applicant/clear")
+    public void clearApplicants() {
+        applicantList.clear();
+    }
 }
 

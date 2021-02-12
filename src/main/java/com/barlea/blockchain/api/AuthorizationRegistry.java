@@ -56,5 +56,10 @@ public class AuthorizationRegistry {
         }
         return authority.orElse(null);
     }
+
+    @GetMapping("/authorization/clear")
+    public void clearAuthorizations() {
+        authorityList.clear();
+    }
 }
 

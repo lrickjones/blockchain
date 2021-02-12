@@ -45,4 +45,9 @@ public class CustodianRegistry {
         }
         return custodian.orElse(null);
     }
+
+    @GetMapping("/custodian/clear")
+    public void clearCustodians() {
+        custodianList.clear();
+    }
 }

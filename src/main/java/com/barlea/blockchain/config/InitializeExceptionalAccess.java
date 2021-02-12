@@ -33,6 +33,10 @@ public class InitializeExceptionalAccess{
     public void initialize() {
 
         Rest.get("http://localhost:8080/blockchain/reset",Void.class);
+        Rest.get("http://localhost:8080/applicant/clear",Void.class);
+        Rest.get("http://localhost:8080/custodian/clear",Void.class);
+        Rest.get("http://localhost:8080/arbiter/clear",Void.class);
+        Rest.get("http://localhost:8080/authorization/clear",Void.class);
 
         /*Applicant applicant =*/ Rest.post("http://localhost:8080/applicant/add",Applicant.class,
                 "requestType","test",

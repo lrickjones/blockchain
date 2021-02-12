@@ -33,6 +33,9 @@ public class InitializeHippa {
     public void hipaaInit(){
 
         Rest.get("http://localhost:8080/blockchain/reset",Void.class);
+        Rest.get("http://localhost:8080/applicant/clear",Void.class);
+        Rest.get("http://localhost:8080/custodian/clear",Void.class);
+        Rest.get("http://localhost:8080/patient/clear",Void.class);
 
         /*Applicant applicant =*/ Rest.post("http://localhost:8080/applicant/add",Applicant.class,
                 "requestType","records",
@@ -42,7 +45,7 @@ public class InitializeHippa {
                 "lastName","Galli",
                 "organization", "InsQuery");
 
-        Arbiter arbiter = Rest.post("http://localhost:8080/arbiter/add",Arbiter.class,
+        Patient patient = Rest.post("http://localhost:8080/patient/add",Patient.class,
                 "jurisdiction", "self",
                 "validationId", generateValidationFromCredentials("juanita","jbPass123"),
                 "firstName","Juanita",
