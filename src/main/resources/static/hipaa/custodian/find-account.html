@@ -161,7 +161,7 @@
      var password = document.getElementById("password").value;
      var status = document.getElementById("status").value;
      if (status.localeCompare("search for record") == 0) {
-        window.location.replace("/custodian/record-lookup.html?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password);
+        window.location.replace("/hipaa/custodian/record-look-up.html?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password);
      } else {
          $.ajax({
             type : "POST",

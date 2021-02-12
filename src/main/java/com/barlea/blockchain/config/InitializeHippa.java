@@ -50,7 +50,14 @@ public class InitializeHippa {
                 "validationId", generateValidationFromCredentials("juanita","jbPass123"),
                 "firstName","Juanita",
                 "middleName","T",
-                "lastName","Buck");
+                "lastName","Buck",
+                "address1","123 Test Ave",
+                "state", "BD",
+                "city", "Teston",
+                "zip", "12345",
+                "month", "6",
+                "day", "15",
+                "year","1972");
 
         Custodian custodian = Rest.post("http://localhost:8080/custodian/add",Custodian.class,
                 "name","HealthClinic",

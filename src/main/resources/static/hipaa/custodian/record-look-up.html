@@ -54,32 +54,57 @@
                     <span class="text-barlea">Applicant: </span><span id="applicant"></span>
                 </div>
             </div>
-            <label class="h5 text-barlea">Subject's Name</label>
-            <div class="row justify-content-center">
-                <input type="text" id="name.firstName" class="container col border border-secondary rounded" name="name.firstName" placeholder="First Name">
-                <input type="text" id="name.middleName" class="container col border border-secondary rounded" name="name.middleName" placeholder="Middle Name">
-                <input type="text" id="name.lastName" class="container col border border-secondary rounded" name="name.lastName" placeholder="Last Name">
-            </div >
-            <label class="h5 text-barlea">Subject's Address</label>
-            <input type="text" id="homeDomicile.address1" class="container col border border-secondary rounded" name="homeDomicile.address1" placeholder="Address 1">
-            <input type="text" id="homeDomicile.address2" class="container col border border-secondary rounded" placeholder="Address 2">
-            <div class="container row">
-                <input type="text" id="homeDomicile.state" class="container col border border-secondary rounded" name="homeDomicile.state" placeholder="State">
-                <input type="text" id="homeDomicile.city" class="container col border border-secondary rounded" name="homeDomicile.city" placeholder="City">
-                <input type="text" id="homeDomicile.zip" class="container col border border-secondary rounded" name="homeDomicile.zip" placeholder="ZIP Code">
+            <div class="container border border-secondary bg-secondary">
+                <label class="h5 text-barlea">Requested Record</label>
+                <div class="row container">
+                    <div class="m-2">
+                        <span class="h6" id="requestedName"></span>
+                    </div>
+                </div >
+                <div class="container row">
+                    <div class="m-2">
+                        <span class="text-barlea">Born: </span><span class="h6" id="requestedBirthdate"></span>
+                    </div>
+                </div >
+                <div class="m-2">
+                    <span class="h6" id="requestedAddress1"></span>
+                </div>
+                <div class="m-2">
+                    <span class="h6" id="requestedAddress2"></span>
+                </div>
+                <div class="m-2">
+                    <span class="h6" id="requestedCity"></span>
+                </div>
             </div>
-            <label class="h5 text-barlea">Subject's Date of Birth</label>
-            <div class="container row">
-                <input type="text" id="month" class="container col border border-secondary rounded" name="month" placeholder="Birth Month">
-                <input type="text" id="day" class="container col border border-secondary rounded" name="day" placeholder="Birth Day">
-                <input type="text" id="year" class="container col border border-secondary rounded" name="year" placeholder="Birth Year">
-            </div >
+            <div class="container border border-success rounded bg-primary">
+                <label class="h5 text-success">Record Found</label>
+                <div class="container row">
+                    <div class="m-2">
+                        <span class="h6" id="foundName"></span>
+                    </div>
+                </div >
+                <div class="container row">
+                    <div class="m-2">
+                        <span class="text-barlea">Born: </span><span class="h6" id="foundBirthdate"></span>
+                    </div>
+                </div >
+                <div class="m-2">
+                    <span class="h6" id="foundAddress1"></span>
+                </div>
+                <div class="m-2">
+                    <span class="h6" id="foundAddress2"></span>
+                </div>
+                <div class="m-2">
+                    <span class="h6" id="foundCity"></span>
+                </div>
+            </div>
+
         </div>
         <div class="container-fluid col">
             <div class="fadeInDown">
                 <div id="formContent">
                     <!-- Tabs Titles -->
-                    <div class="h3 container fadeIn first text-barlea">Applicant Search</div>
+                    <div class="h3 container fadeIn first text-barlea">Request Authorization</div>
                     <!-- Login Form -->
                     <div id="error" class="text-danger"></div>
                     <div class="input-group justify-content-center">
@@ -89,11 +114,11 @@
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" onclick="updateStatus('search for record')">Search for Record</a>
-                                <a class="dropdown-item" onclick="updateStatus('deny request')">Deny Request</a>
+                                <a class="dropdown-item" onclick="updateStatus('request authorization')">Request Authorization</a>
+                                <a class="dropdown-item" onclick="updateStatus('record not found')">Record Not Found</a>
                             </div>
                         </div>
-                        <input type="text" id="status" class="fadeIn third hidden" style="width:62%;" name="status" placeholder="Request Type">
+                        <input type="text" id="status" class="fadeIn third hidden" style="width:62%;" name="status" placeholder="Choose Action">
                     </div>
                     <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
                     <input type="password" id="password" class="fadeIn second hidden" name="password" placeholder="password">
@@ -117,32 +142,45 @@
      var url = new URL(url_string);
      var contractId = url.searchParams.get("contractId");
      var custodianUuId = url.searchParams.get("custodianUuId");
+     var userName = url.searchParams.get("userName");
+     var password = url.searchParams.get("password");
      if (contractId) {
           $.getJSON("/contract/find?contractId=" + contractId, function(contract){
+                var lastName = contract.application.patientName.lastName;
+                var firstName = contract.application.patientName.firstName;
                 $.getJSON("/applicant/find?uuid=" + contract.applicantId, function(applicant) {
                     $("#applicant").append(applicant.organization);
                 });
-                if (contract.application) {
-                    $("#requestType").append(contract.application.requestType);
-                    $("#requestPurpose").append(contract.application.requestPurpose);
-                    if (contract.application.patientName) {
-                        document.getElementById("name.firstName").value = contract.application.patientName.firstName;
-                        document.getElementById("name.middleName").value = contract.application.patientName.middleName;
-                        document.getElementById("name.lastName").value = contract.application.patientName.lastName;
+                $.getJSON("/patient/find-by-name?lastName=" + lastName + "&firstName=" + firstName, function(patient) {
+                    if (contract.application) {
+                        $("#requestType").append(contract.application.requestType);
+                        $("#requestPurpose").append(contract.application.requestPurpose);
+                        if (contract.application.patientName) {
+                            $("#requestedName").append(contract.application.patientName.lastName + ", " + contract.application.patientName.firstName + " " + contract.application.patientName.middleName);
+                        }
+                        if (contract.application.patientAddress) {
+                            $("#requestedAddress1").append(contract.application.patientAddress.address1);
+                            $("#requestedAddress2").append(contract.application.patientAddress.address2);
+                            $("#requestedCity").append(contract.application.patientAddress.city + " " + contract.application.patientAddress.state + ", " + contract.application.patientAddress.zip);
+                        }
+                        if (contract.application.patientBirthdate) {
+                            $("#requestedBirthdate").append(contract.application.patientBirthdate.month + " " + contract.application.patientBirthdate.day + ", " + contract.application.patientBirthdate.year);
+                        }
                     }
-                    if (contract.application.patientAddress) {
-                        document.getElementById("homeDomicile.address1").value = contract.application.patientAddress.address1;
-                        document.getElementById("homeDomicile.address2").value = contract.application.patientAddress.address2;
-                        document.getElementById("homeDomicile.state").value = contract.application.patientAddress.state;
-                        document.getElementById("homeDomicile.city").value = contract.application.patientAddress.city;
-                        document.getElementById("homeDomicile.zip").value = contract.application.patientAddress.zip;
+                    if (patient) {
+                        if (patient.name) {
+                            $("#foundName").append(patient.name.lastName + ", " + patient.name.firstName + " " + patient.name.middleName);
+                        }
+                        if (patient.address) {
+                            $("#foundAddress1").append(patient.address.address1);
+                            $("#foundAddress2").append(patient.address.address2);
+                            $("#foundCity").append(patient.address.city + " " + patient.address.state + ", " + patient.address.zip);
+                        }
+                        if (patient.birthdate) {
+                            $("#foundBirthdate").append(patient.birthdate.month + "/" + patient.birthdate.day + "/" + patient.birthdate.year);
+                        }
                     }
-                    if (contract.application.patientBirthdate) {
-                        document.getElementById("month").value = contract.application.patientBirthdate.month;
-                        document.getElementById("day").value = contract.application.patientBirthdate.day;
-                        document.getElementById("year").value = contract.application.patientBirthdate.year;
-                    }
-                }
+                });
           });
      }
    });
@@ -161,7 +199,7 @@
      var password = document.getElementById("password").value;
      var status = document.getElementById("status").value;
      if (status.localeCompare("search for record") == 0) {
-        window.location.replace("/custodian/account.html?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password);
+        window.location.replace("/hipaa/custodian/record-lookup.html?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password);
      } else {
          $.ajax({
             type : "POST",

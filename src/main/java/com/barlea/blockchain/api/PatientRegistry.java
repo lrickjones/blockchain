@@ -21,10 +21,11 @@ public class PatientRegistry {
     List<Patient> patientList = new ArrayList<>();
 
     @PostMapping("/patient/add")
-    public Patient addPatient(String validationId, Name arbiterName, Birthdate birthdate) {
+    public Patient addPatient(String validationId, Name arbiterName, Address address, Birthdate birthdate) {
         Patient patient = Patient.builder()
                 .validationId(validationId)
                 .name(arbiterName)
+                .address(address)
                 .birthdate(birthdate)
                 .build();
         patientList.add(patient);
