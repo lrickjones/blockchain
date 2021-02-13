@@ -60,6 +60,14 @@
        });
    }
 
+      var patient;
+      function getPatient(id) {
+         if (!id) patient =  null;
+         $.getJSON("/patient/find?uuid=" + id, function(result){
+               patient = result;
+          });
+      }
+
    var custodian;
    function getCustodian(id) {
       if (!id) custodian =  null;
@@ -96,6 +104,7 @@
    function renderContract(contract, paramName, paramValue) {
       var url = "";
       var instructions = "";
+      var mobile = false;
       if (!paramName) {
         url = paramValue + "/contract/history.html?contractId=" + contract.contractId;
       } else {
@@ -117,15 +126,30 @@
           } else if (contract.currentStatus.localeCompare("record request") == 0) {
               url = "/hipaa/custodian/find-account.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
               instructions = "Lookup account and verify permission";
+          } else if (contract.currentStatus.localeCompare("request authorization") == 0) {
+              url = "/hipaa/arbiter/authorize-access.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
+              instructions = "Grant or Deny Permission";
+              mobile = true;
           }
       }
       var div = "<div class='container-fluid w-100 p-1 rounded bg-darkblue mb-4' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
       div += "<a class='container-fluid w-100 btn fadeIn second bg-teal' href='" + url + "' role='button'>";
-      div += "<div class='row px-2'>"
-      div += "<div class='col-3 p-2 h4 h-50 rounded-left float-left text-center text-darkblue bg-lightblue'>" + contract.currentStatus + "</div>";
-      div += "<div class='col-9 text-left text-barlea'>";
+
+      if (mobile) {
+            div += "<div class='row px-2 justify-content-center'>"
+            div += "<div class='h4 text-center text-darkblue bg-lightblue'>" + contract.currentStatus + "</div>";
+      } else {
+            div += "<div class='row px-2'>"
+            div += "<div class='col-3 p-2 h4 h-50 rounded-left float-left text-center text-darkblue bg-lightblue'>" + contract.currentStatus + "</div>";
+      }
+
+      if (mobile) {
+        div += "<div class='text-left text-barlea'>";
+      } else {
+        div += "<div class='col-9 text-left text-barlea'>";
+      }
       if (instructions) {
-        div += "<div class='h5 text-lightblue'>" + instructions + "</div>";
+        div += "<div class='h5 text-lightblue w-100'>" + instructions + "</div>";
       }
 
       div += "<div>";
@@ -173,6 +197,12 @@
       if (arbiter) {
         div += "<b>Judge: </b> " + arbiter.personalInfo.lastName + ", " + arbiter.personalInfo.firstName;
       }
+
+      getPatient(contract.arbiterId);
+      if (patient) {
+        div += "<b>Owner: </b> " + patient.name.lastName + ", " + patient.name.firstName;
+      }
+
       div += "</div>";
 
       div += "<div>";

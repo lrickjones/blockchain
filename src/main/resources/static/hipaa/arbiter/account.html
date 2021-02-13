@@ -8,49 +8,26 @@
     <title>Applicant Account Page</title>
 </head>
 <body>
-<nav id="navbar" class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" href="/"><img src="/img/barlea.png" style="width:80px;height:100px;" alt="BARLEA Logo"></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/hipaa/contract/contracts.html">Contracts</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/hipaa/applicant/login.html"><b>Applicant</b></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/hipaa/arbiter/login.html">Arbiter</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/hipaa/custodian/login.html">Custodian</a>
-            </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+<div class="wrapper fadeInDown">
+    <div id="mobileHeader">
     </div>
-</nav>
 
-<div class="h2 container text-darkblue">Welcome <span id="firstName"></span>, </div>
-<br>
-<div class="container">
-    <div class="h3 container text-teal">Here are your work items:</div>
+    <div id="mobileContent" class="pt-4">
 
-    <div class="wrapper fadeInDown">
-        <div class="container-fluid">
+        <div>
+            <img src="/img/messenger.png"  alt="messenger" style="width:80px;height:80px;"/>
+        </div>
+        <!-- Icon -->
+        <div class="container-fluid my-4">
             <div id="contracts"></div>
         </div>
-    </div>
 
+    </div>
+    <div id="mobileFooter">
+        <img src="/img/home.png"  alt="home button" style="width:80px;height:80px;"/>
+    </div>
 </div>
+
 </body>
 <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
@@ -65,15 +42,8 @@
    $(document).ready(function() {
      var url_string = window.location.href;
      var url = new URL(url_string);
-     custodianId = url.searchParams.get("custodianUuId");
-     renderContractsByOwner("custodian","custodianUuId",custodianId);
-     $.getJSON("/custodian/find?uuid=" + custodianId, function(value){
-        if (!value) {
-            alert("Applicant not found");
-        } else {
-            $("#firstName").append(value.name);
-        }
-     });
+     arbiterId = url.searchParams.get("arbiterUuId");
+     renderContractsByOwner("arbiter","arbiterUuId",arbiterId);
    });
 
 </script>

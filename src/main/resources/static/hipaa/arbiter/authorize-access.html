@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<head>
+    <meta charset = "ISO-8859-1" />
+    <link href = "/css/styles.css" rel = "stylesheet"/>
+    <title>Applicant Account Page</title>
+</head>
+<body>
+<div class="wrapper fadeInDown">
+    <div id="mobileHeader">
+    </div>
+
+    <div id="mobileContent" class="pt-2">
+
+        <div>
+            <img src="/img/messenger.png"  alt="messenger" style="width:80px;height:80px;"/>
+        </div>
+
+        <div class="radio bg-teal text-barlea pt-1 mx-2">
+            <div id="error" class="text-danger"></div>
+            <!-- Icon -->
+            <div class="container-fluid my-4">
+                <div id="contracts"></div>
+            </div>
+
+            <label>
+                <input type="radio" name="authorization" id="authorize1" value="authorizeOnce">
+                Allow Access This Once
+            </label>
+            <label>
+                <input type="radio" name="authorization" id="authorize2" value="authorizeAlways">
+                Always Allow for InsQuery
+            </label>
+            <label>
+                <input type="radio" name="authorization" id="authorize3" value="authorizeNever">
+                Do Not Allow Access
+            </label>
+            <input  type="button" onclick="validate()" value="Send">
+            <input  type="hidden" id="userName" value="juanita">
+            <input  type="hidden" id="password" value="jbPass123">
+        </div>
+
+    </div>
+    <div id="mobileFooter">
+        <img src="/img/home.png"  alt="home button" style="width:80px;height:80px;"/>
+    </div>
+</div>
+
+</body>
+<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script src="/js/blockchain.js"></script>
+
+<script>
+
+   $(document).ready(function() {
+     var url_string = window.location.href;
+     var url = new URL(url_string);
+     arbiterId = url.searchParams.get("arbiterUuId");
+     renderContractsByOwner("arbiter","arbiterUuId",arbiterId);
+   });
+
+   function validate() {
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    arbiterId = url.searchParams.get("arbiterUuId");
+    contractId = url.searchParams.get("contractId");
+    var userName = document.getElementById("userName").value;
+    var password = document.getElementById("password").value;
+    var approval = document.getElementsByName("authorization");
+    var approved = false;
+    for (i=0; i< approval.length; i++) {
+        if (approval[i].checked) approved = approval[i].value.localeCompare("authorizeNever") != 0;
+    }
+    $.ajax({
+        type : "GET",
+        url : "/utils/validationId?userName="+userName+"&password="+password,
+        success : function(data) {
+            if (!data.localeCompare("Invalid")) {
+                $("#error").append("Invalid username or password");
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url : "/hipaa/access-approval?arbiterUuId=" + arbiterId + "&userName=" + userName + "&password=" + password + "&contractId=" + contractId + "&approved=" + approved,
+                    success : function(value) {
+                        if (!value) {
+                            $("#error").append("Invalid username or password");
+                        } else {
+                            window.location.replace("/hipaa/applicant/login2.html");
+                        }
+                    },
+                    error : function(data) {
+                        $("#error").append("System Error: " + data);
+                    }
+                });
+            }
+        },
+        error : function(data) {
+            $("#error").append("System Error: " + data);
+        }
+    });
+
+}
+
+</script>
+</html>
