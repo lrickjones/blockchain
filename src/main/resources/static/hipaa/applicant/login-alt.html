@@ -62,7 +62,7 @@ function validate() {
                             if (!value) {
                                 $("#error").append("Invalid username or password");
                             } else {
-                                window.location.replace("/hipaa/applicant/account.html?applicantUuId="+value.uuid);
+                                window.location.replace("/hipaa/applicant/records-request.html?applicantUuId="+value.uuid);
                             }
                         },
                         error : function(data) {

@@ -130,7 +130,11 @@
               url = "/hipaa/arbiter/authorize-access.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
               instructions = "Grant or Deny Permission";
               mobile = true;
+          } else if (contract.currentStatus.localeCompare("applicant authorized") == 0) {
+             url = "/hipaa/applicant/access-record.html?contractId=" + contract.contractId + "&" + paramName + "=" + paramValue;
+             instructions = "Login and access data";
           }
+
       }
       var div = "<div class='container-fluid w-100 p-1 rounded bg-darkblue mb-4' style='box-shadow: 0 20px 20px 0 rgba(0,0,0,0.5);'>";
       div += "<a class='container-fluid w-100 btn fadeIn second bg-teal' href='" + url + "' role='button'>";

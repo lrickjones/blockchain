@@ -568,7 +568,7 @@ public class BlockchainController {
 	}
 
 	@PostMapping("/hipaa/request-authorization")
-	public Contract requestAuthorization(String custodianUuId, String userName, String password, String contractId, String arbiterUuId) throws JsonProcessingException {
+	public Contract requestAuthorization(String custodianUuId, String userName, String password, String contractId, String arbiterUuId, String token) throws JsonProcessingException {
 		// find contract, if active
 		Contract contract = findContract(contractId);
 		if (contract == null) return null;
@@ -588,6 +588,7 @@ public class BlockchainController {
 				.arbiterId(arbiterUuId)
 				.currentStatus(Contract.REQUEST_AUTHORIZATION)
 				.owner(Contract.ARBITER)
+				.tokenId(token)
 				.lastVerification(verificationRecord().getIndex())
 				.build();
 		// update contract from copy (modifying contract will change the block and invalidate the chain)
@@ -633,10 +634,10 @@ public class BlockchainController {
 		String validationId = Hasher.hash(Credentials.builder().userName(userName).password(password).build().toString());
 		if (!validationId.equals(patient.getValidationId())) return null;
 
-		// record applicant and custodian record in verfications
+		// record applicant and custodian record in verifications
 		verifications.addTransaction(patient.getUuid(),contract.getApplicantId(), patient);
 		Contract newContract = contract.toBuilder()
-				.currentStatus(approved?Contract.ACCESS_APPROVED:Contract.ACCESS_DENIED)
+				.currentStatus(approved?Contract.APPLICANT_AUTHORIZED:Contract.APPLICANT_NOT_AUTHORIZED)
 				.owner(Contract.APPLICANT)
 				.lastVerification(verificationRecord().getIndex())
 				.build();
@@ -644,6 +645,35 @@ public class BlockchainController {
 		requests.addTransaction(patient.getUuid(), contract.getApplicantId(),newContract);
 		// update the registry that there is a new or updated contract
 		updateRegister(patient.getUuid(),contract.getApplicantId(),contract.getContractId(),requestRecord().getIndex());
+		return contract;
+	}
+
+	@PostMapping("/hipaa/record-access")
+	public Contract addRecordAccess(String contractId, String userName, String password, String applicantUuId, String token) throws JsonProcessingException {
+		// find contract, if active
+		Contract contract = findContract(contractId);
+		if (contract == null) return null;
+		// Find custodian
+		Applicant applicant = Rest.get("http://localhost:8080/applicant/find",Applicant.class,"uuid",applicantUuId);
+		if (applicant == null) return null;
+		// Validate custodian
+		String validationId = Hasher.hash(Credentials.builder().userName(userName).password(password).build().toString());
+		if (!validationId.equals(applicant.getValidationId())) return null;
+		if (!token.equals(contract.getTokenId())) return null;
+		// record both transactions in the verification record
+		verifications.addTransaction(applicantUuId, contract.getCustodianId(), applicant);
+		verifications.addTransaction(applicantUuId,contract.getCustodianId(),contract);
+		// update contract from copy
+		Contract newContract = contract.toBuilder()
+				.applicantId(applicant.getUuid())
+				.currentStatus(Contract.RECORD_DELIVERED)
+				.owner(Contract.APPLICANT)
+				.lastVerification(verificationRecord().getIndex())
+				.build();
+		// add contract transaction to requests
+		requests.addTransaction(applicant.getUuid(), contract.getCustodianId(),newContract);
+		// update the registry that there is a new or updated contract
+		updateRegister(applicant.getUuid(), contract.getCustodianId(),contract.getContractId(),requestRecord().getIndex());
 		return contract;
 	}
 

@@ -77,8 +77,8 @@
                 </div>
             </div>
             <div class="container border border-success rounded bg-primary">
-                <label class="h5 text-success">Record Found</label>
-                <span class="text-warning py-4"> Authorized: </span><span id="authorized"></span>
+                <label class="h5 text-success">Record Found&nbsp;&nbsp;&nbsp;</label>
+                <span class="h5 text-warning py-4"> Authorized: </span><span id="authorized" class="h5 text-danger"></span>
                 <div class="container row">
                     <div class="m-2">
                         <span class="h6" id="foundName"></span>
@@ -119,14 +119,17 @@
                                 <a class="dropdown-item" onclick="updateStatus('record not found')">Record Not Found</a>
                             </div>
                         </div>
-                        <input type="text" id="status" class="fadeIn third hidden" style="width:62%;" name="status" placeholder="Choose Action">
+                        <input type="text" id="status" class="fadeIn second hidden" style="width:62%;" name="status" placeholder="Choose Action">
                     </div>
-                    <input type="text" id="userName" class="fadeIn second" name="userName" placeholder="login">
+                    <input type="hidden" id="token">
+                    <input type="text" id="userName" class="fadeIn third" name="userName" placeholder="login">
                     <input type="password" id="password" class="fadeIn second hidden" name="password" placeholder="password">
                     <input type="hidden" id="arbiterUuId">
                     <input  type="button" class="fadeIn fourth" onclick="validate()" value="Submit Request">
                 </div>
             </div>
+            <div id="showToken"></div>
+
         </div>
     </div>
 
@@ -195,6 +198,16 @@
    function updateStatus(newStatus) {
      var status = document.getElementById("status");
      status.value = newStatus;
+     if (newStatus.localeCompare("request authorization") == 0) {
+        var token = "2342A-BARLEA-43J469I-A834569";
+        document.getElementById("token").value = token;
+        var div = "<div class='fadeInDown'>";
+        div+= "<div class='text-center text-secondary bg-barlea rounded border border-secondary p-2 m-2 w-75'><span>" + token + "</span></div>";
+        div+= "<div class='text-center py-2 w-75'>";
+        div+= "<img class='fadeIn third' src='/img/barlea-token-pass.png' style='width:180px;height:180px;' alt='BARLEA Token'>";
+        div+= "</div></div>";
+        $("#showToken").append(div);
+     }
    }
 
    function validate() {
@@ -206,6 +219,7 @@
      var password = document.getElementById("password").value;
      var status = document.getElementById("status").value;
      var arbiterUuId = document.getElementById("arbiterUuId").value;
+     var token = document.getElementById("token").value;
      if (status.localeCompare("record not found") == 0) {
            $.ajax({
             type : "POST",
@@ -224,7 +238,7 @@
      } else {
          $.ajax({
             type : "POST",
-            url : "/hipaa/request-authorization?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password + "&arbiterUuId=" + arbiterUuId,
+            url : "/hipaa/request-authorization?contractId=" + contractId + "&custodianUuId=" + custodianUuId + "&userName="+userName+"&password="+password + "&arbiterUuId=" + arbiterUuId + "&token=" + token,
             success : function(data) {
                 if (!data) {
                     alert("Submission Failed - Check Username and Password");
