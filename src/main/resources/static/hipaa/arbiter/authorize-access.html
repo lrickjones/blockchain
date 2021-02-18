@@ -8,39 +8,48 @@
     <title>Applicant Account Page</title>
 </head>
 <body>
-<div class="wrapper fadeInDown">
-    <div id="mobileHeader">
-    </div>
 
-    <div id="mobileContent" class="pt-1">
-
-        <div class="radio bg-teal text-barlea pt-1 mx-2">
-            <div id="error" class="text-danger"></div>
-            <!-- Icon -->
-            <div class="container-fluid my-4">
-                <div id="contracts"></div>
+<div class="row justify-content-center">
+    <div class="col-3">
+        <div class="wrapper fadeInDown">
+            <div id="mobileHeader">
             </div>
 
-            <label>
-                <input type="radio" name="authorization" id="authorize1" value="authorizeOnce">
-                Allow Access This Once
-            </label>
-            <label>
-                <input type="radio" name="authorization" id="authorize2" value="authorizeAlways">
-                Always Allow for InsQuery
-            </label>
-            <label>
-                <input type="radio" name="authorization" id="authorize3" value="authorizeNever">
-                Do Not Allow Access
-            </label>
-            <input  type="button" onclick="validate()" value="Send">
-            <input  type="hidden" id="userName" value="juanita">
-            <input  type="hidden" id="password" value="jbPass123">
-        </div>
+            <div id="mobileContent" class="pt-1">
 
+                <div class="radio bg-teal text-barlea pt-1 mx-2">
+                    <div id="error" class="text-danger"></div>
+                    <!-- Icon -->
+                    <div class="container-fluid my-4">
+                        <div id="contracts"></div>
+                    </div>
+
+                    <label>
+                        <input type="radio" name="authorization" id="authorize1" onclick="activate(true)" value="authorizeOnce">
+                        Allow Access This Once
+                    </label>
+                    <label>
+                        <input type="radio" name="authorization" id="authorize2" onclick="activate(true)" value="authorizeAlways">
+                        Always Allow for InsQuery
+                    </label>
+                    <label>
+                        <input type="radio" name="authorization" id="authorize3" onclick="activate(false)" value="authorizeNever">
+                        Do Not Allow Access
+                    </label>
+                    <input  type="button" onclick="validate()" value="Send">
+                    <input  type="hidden" id="userName" value="juanita">
+                    <input  type="hidden" id="password" value="jbPass123">
+                </div>
+
+            </div>
+            <div id="mobileFooter">
+                <img src="/img/home.png"  alt="home button" style="width:80px;height:80px;"/>
+            </div>
+        </div>
     </div>
-    <div id="mobileFooter">
-        <img src="/img/home.png"  alt="home button" style="width:80px;height:80px;"/>
+
+    <div class="col-2">
+        <div id="showToken" class="container p-4 m-4"></div>
     </div>
 </div>
 
@@ -60,7 +69,28 @@
      var url = new URL(url_string);
      arbiterId = url.searchParams.get("arbiterUuId");
      renderContractsByOwner("arbiter","arbiterUuId",arbiterId);
+        var div = "<div class='fadeInDown'>";
+        div+= "<div class='text-center py-2 w-75'>";
+        div+= "<img class='fadeIn first black-white' src='/img/barlea-token-flat.png' style='width:180px;height:180px;' alt='BARLEA Token'>";
+        div+= "<img class='fadeIn first black-white' src='/img/barlea-token-flat-back.png' style='width:180px;height:180px;' alt='BARLEA Token'>";
+        div+= "</div></div>";
+        $("#showToken").append(div);
    });
+
+   function activate(activated) {
+        document.getElementById("showToken").innerHTML = "";
+        var div = "<div class='fadeInDown'>";
+        div+= "<div class='text-center py-2 w-75'>";
+        if (activated) {
+            div+= "<img class='fadeIn first' src='/img/barlea-token-flat.png' style='width:180px;height:180px;' alt='BARLEA Token'>";
+            div+= "<img class='fadeIn first' src='/img/barlea-token-flat-back.png' style='width:180px;height:180px;' alt='BARLEA Token'>";
+        } else {
+            div+= "<img class='fadeIn first black-white' src='/img/barlea-token-flat.png' style='width:180px;height:180px;' alt='BARLEA Token'>";
+            div+= "<img class='fadeIn first black-white' src='/img/barlea-token-flat-back.png' style='width:180px;height:180px;' alt='BARLEA Token'>";
+        }
+        div+= "</div></div>";
+        $("#showToken").append(div);
+   }
 
    function validate() {
     var url_string = window.location.href;

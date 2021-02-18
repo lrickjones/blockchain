@@ -128,7 +128,7 @@
                     <input  type="button" class="fadeIn fourth" onclick="validate()" value="Submit Request">
                 </div>
             </div>
-            <div id="showToken"></div>
+            <div id="showToken" class="fadeInDown"></div>
 
         </div>
     </div>
@@ -202,9 +202,9 @@
         var token = "2342A-BARLEA-43J469I-A834569";
         document.getElementById("token").value = token;
         var div = "<div class='fadeInDown'>";
-        div+= "<div class='text-center text-secondary bg-barlea rounded border border-secondary p-2 m-2 w-75'><span>" + token + "</span></div>";
         div+= "<div class='text-center py-2 w-75'>";
-        div+= "<img class='fadeIn third' src='/img/barlea-token-pass.png' style='width:180px;height:180px;' alt='BARLEA Token'>";
+        div+= "<img class='fadeIn first black-white' src='/img/barlea-token-flat.png' style='width:180px;height:180px;' alt='BARLEA Token'>";
+        div+= "<img class='fadeIn first black-white' src='/img/barlea-token-flat-back.png' style='width:180px;height:180px;' alt='BARLEA Token'>";
         div+= "</div></div>";
         $("#showToken").append(div);
      }
